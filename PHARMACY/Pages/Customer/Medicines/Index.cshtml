@@ -1,0 +1,38 @@
+﻿@page
+@model PHARMACY.Pages.Customer.Medicines.IndexModel
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Medicines Catalog</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price (EGP)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Medicines)
+                {
+                    <tr>
+                        <td>@m.Medicine_ID</td>
+                        <td>@m.Name</td>
+                        <td>@m.Price</td>
+                        <td>
+                            <form method="post" asp-page="/Customer/Orders/AddOrder">
+                                <input type="hidden" name="MedicineID" value="@m.Medicine_ID" />
+                                <input type="hidden" name="MedicineName" value="@m.Name" />
+                                <input type="hidden" name="UnitPrice" value="@m.Price" />
+                                <input type="number" name="Quantity" value="1" min="1" class="form-control d-inline-block" style="width:80px;" />
+                                <button type="submit" class="btn btn-success btn-sm">Order</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

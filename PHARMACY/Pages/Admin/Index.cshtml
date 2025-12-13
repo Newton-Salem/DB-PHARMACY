@@ -1,0 +1,52 @@
+﻿@page
+@model PHARMACY.Pages.Admin.IndexModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center">Admin Dashboard</h2>
+
+    <div class="row">
+
+        <div class="col-md-3">
+            <a href="/Admin/Medicines" class="text-decoration-none">
+                <div class="card text-center shadow p-3">
+                    <h5>Medicines</h5>
+                    <p>Manage pharmacy medicines</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/Admin/Customers" class="text-decoration-none">
+                <div class="card text-center shadow p-3">
+                    <h5>Customers</h5>
+                    <p>View & manage customers</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/Admin/Suppliers" class="text-decoration-none">
+                <div class="card text-center shadow p-3">
+                    <h5>Suppliers</h5>
+                    <p>Manage medicine suppliers</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/Admin/Orders" class="text-decoration-none">
+                <div class="card text-center shadow p-3">
+                    <h5>Orders</h5>
+                    <p>View & track orders</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>

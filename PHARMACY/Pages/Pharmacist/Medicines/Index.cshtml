@@ -1,0 +1,10 @@
+﻿@page
+@model PHARMACY.Pages.Pharmacist.Medicines.IndexModel
+
+<h3>Manage Medicines</h3>
+<ul>
+    @foreach (var m in Model.Medicines)
+    {
+        <li>@m</li>
+    }
+</ul>

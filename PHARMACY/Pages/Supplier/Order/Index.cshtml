@@ -1,0 +1,26 @@
+﻿@page
+@model PHARMACY.Pages.Supplier.Orders.IndexModel
+
+<h3>Supplier Orders</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.CustomerName</td>
+                <td>@order.TotalAmount</td>
+                <td>@order.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
