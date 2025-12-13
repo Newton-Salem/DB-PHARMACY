@@ -76,6 +76,8 @@
                     <ul class="nav flex-column">
                         <li class="nav-item"><a class="nav-link" href="/Pharmacist/Index">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="/Pharmacist/Medicines/Index">Medicines</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Pharmacist/Order/Create">Supplier Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Pharmacist/CustomerFeedback/Index">Customer Feedbacks</a></li>
                         <li class="nav-item"><a class="nav-link" href="/Account/Profile">Profile</a></li>
                         <li class="nav-item"><a class="nav-link" asp-page="/Account/Logout">Logout</a></li>
                     </ul>
@@ -93,7 +95,6 @@
             });
         </script>
 
-        <!-- Main Content -->
         <main class="flex-fill p-3">
             @RenderBody()
         </main>

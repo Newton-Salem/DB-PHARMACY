@@ -1,20 +1,20 @@
 ﻿@page
 @model PHARMACY.Pages.Admin.MedicinesModel
 @{
-    ViewData["Title"] = "Medicines Management";
+    ViewData["Title"] = "Medicines Overview";
 }
 
 <div class="container mt-4">
 
-    <h2 class="mb-4 text-center">Medicines Management</h2>
+    <h2 class="mb-4 text-center">Medicines Overview</h2>
 
-    <a href="/Admin/Medicines/AddMedicine" class="btn btn-primary mb-3">+ Add Medicine</a>
-
+    <!-- Search Form -->
     <form method="get" class="mb-3 d-flex">
         <input type="text" name="SearchName" value="@Model.SearchName" class="form-control me-2" placeholder="Search by name" />
         <button type="submit" class="btn btn-secondary">Search</button>
     </form>
 
+    <!-- Medicines Table -->
     <table class="table table-bordered table-striped text-center">
         <thead class="table-dark">
             <tr>
@@ -23,7 +23,6 @@
                 <th>Stock</th>
                 <th>Price</th>
                 <th>Expiry Date</th>
-                <th>Actions</th>
             </tr>
         </thead>
 
@@ -36,17 +35,9 @@
                     <td>@m.Stock</td>
                     <td>@m.Price</td>
                     <td>@m.Expiry.ToShortDateString()</td>
-                    <td>
-                        <a class="btn btn-sm btn-warning" href="/Admin/Medicines/EditMedicine?id=@m.Id">Edit</a>
-                        <form method="post" asp-page-handler="Delete" style="display:inline;">
-                            <input type="hidden" name="id" value="@m.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this medicine?')">Delete</button>
-                        </form>
-                    </td>
                 </tr>
             }
         </tbody>
-
     </table>
 
 </div>

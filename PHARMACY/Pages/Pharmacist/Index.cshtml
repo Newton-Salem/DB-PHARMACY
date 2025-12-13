@@ -1,4 +1,35 @@
 ﻿@page
 @model PHARMACY.Pages.Pharmacist.IndexModel
-<h2>Welcome, @Model.Username!</h2>
-<p>This is your pharmacist dashboard.</p>
+@{
+    ViewData["Title"] = "Pharmacist Dashboard";
+}
+
+<h2 class="mb-4">Welcome, @Model.Username!</h2>
+
+<div class="row">
+    <!-- total orders card -->
+    <div class="col-md-4 mb-3">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text display-5">@Model.TotalOrders</p>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-light" asp-page="/Pharmacist/Order/Create">View Orders</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- manage medicines Card -->
+    <div class="col-md-4 mb-3">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body">
+                <h5 class="card-title">Manage Medicines</h5>
+                <p class="card-text">Add, update, or view medicine inventory.</p>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-light" asp-page="/Pharmacist/Medicines/Index">Go to Medicines</a>
+            </div>
+        </div>
+    </div>
+</div>

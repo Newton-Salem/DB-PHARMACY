@@ -1,11 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.Pages.Pharmacist.Orders;
 
 namespace PHARMACY.Pages.Pharmacist
 {
     public class IndexModel : PageModel
     {
         public string Username { get; set; }
+
+        // 🌟 مجموع الأوردرات
+        public int TotalOrders { get; set; }
 
         public IActionResult OnGet()
         {
@@ -17,6 +21,9 @@ namespace PHARMACY.Pages.Pharmacist
                 HttpContext.Session.Clear();
                 return RedirectToPage("/Account/Login");
             }
+
+            // 🌟 إذا كانت صفحة Orders موجودة، نحسب عدد الأوردرات
+            TotalOrders = CreateModel.OrdersData.Count;
 
             return Page();
         }

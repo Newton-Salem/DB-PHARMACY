@@ -1,4 +1,45 @@
 ﻿@page
 @model PHARMACY.Pages.Supplier.IndexModel
-<h2>Welcome, @Model.Username!</h2>
-<p>This is your supplier dashboard.</p>
+@{
+    ViewData["Title"] = "Supplier Dashboard";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 bg-light rounded">
+        <div class="card-body text-center">
+            <h2 class="card-title mb-3">Welcome, @Model.Username!</h2>
+            <p class="card-text mb-4">Welcome!.</p>
+
+            <div class="row justify-content-center">
+                <div class="col-md-3 mb-3">
+                    <a href="/Supplier/Order/Index" class="btn btn-primary btn-lg w-100 shadow">View Orders</a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a href="/Supplier/Notifications/Index" class="btn btn-warning btn-lg w-100 shadow">Notifications</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .btn {
+        transition: transform 0.2s;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+</style>

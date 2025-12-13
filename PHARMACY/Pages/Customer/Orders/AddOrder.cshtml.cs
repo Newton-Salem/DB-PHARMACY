@@ -13,7 +13,7 @@ namespace PHARMACY.Pages.Customer.Orders
 
         public IActionResult OnGet()
         {
-            // لا تحتاج أي شيء لأن البيانات تجي من صفحة Medicines
+           
             return Page();
         }
 

@@ -6,8 +6,6 @@
 
 <div class="container mt-4">
     <h1 class="mb-4 text-center">My Orders</h1>
-
-    <!-- زر New Order يروح على صفحة Medicines لاختيار الدوا -->
     <div class="mb-3 text-end">
         <a href="/Customer/Medicines/Index" class="btn btn-primary">+ New Order</a>
     </div>
@@ -46,16 +44,23 @@
                         }
                     </td>
                     <td>
+                       
                         @if (o.Status == "Pending")
                         {
-                            <form method="post" asp-page-handler="Cancel" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                            <form method="post" asp-page-handler="Cancel" onsubmit="return confirm('Are you sure you want to cancel this order?');" style="display:inline;">
                                 <input type="hidden" name="orderId" value="@o.OrderID" />
                                 <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
                             </form>
                         }
+                      
+                        else if (o.Status == "Completed")
+                        {
+                            <a href="/Customer/Orders/Feedback?orderId=@o.OrderID" class="btn btn-success btn-sm">Give Feedback</a>
+                        }
+                     
                         else
                         {
-                            <button class="btn btn-secondary btn-sm" disabled>Cancel</button>
+                            <button class="btn btn-secondary btn-sm" disabled>Cancelled</button>
                         }
                     </td>
                 </tr>

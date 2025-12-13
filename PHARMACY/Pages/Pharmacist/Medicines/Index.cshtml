@@ -1,10 +1,62 @@
 ﻿@page
 @model PHARMACY.Pages.Pharmacist.Medicines.IndexModel
+@{
+    ViewData["Title"] = "Manage Medicines";
+}
 
-<h3>Manage Medicines</h3>
-<ul>
-    @foreach (var m in Model.Medicines)
-    {
-        <li>@m</li>
-    }
-</ul>
+<div class="container mt-4">
+    <h2 class="mb-4">Manage Medicines</h2>
+
+    <!-- Search & Out of Stock -->
+    <form method="post" class="mb-3 d-flex gap-2">
+        <input type="text" class="form-control" placeholder="Search Medicine..." asp-for="SearchTerm" />
+        <button type="submit" class="btn btn-primary" asp-page-handler="Search">Search</button>
+        <button type="submit" class="btn btn-danger" asp-page-handler="OutOfStock">Out of Stock</button>
+    </form>
+
+    <!-- Add New Medicine -->
+    <form method="post" asp-page-handler="Add" class="card p-3 mb-4">
+        <h5>Add Medicine</h5>
+
+        <input asp-for="NewMedicine.Name" class="form-control mb-2" placeholder="Name" required />
+
+        <input asp-for="NewMedicine.Stock" type="number" class="form-control mb-2" placeholder="Stock" required />
+
+        <input asp-for="NewMedicine.ExpiryDate" type="date" class="form-control mb-2" required />
+
+        <button type="submit" class="btn btn-success">Add</button>
+    </form>
+
+
+    <!-- Medicines Table -->
+    <table class="table table-striped table-bordered text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Stock</th>
+                <th>Expiry Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model.Medicines)
+            {
+                <tr>
+                    <td>@m.Id</td>
+                    <td>@m.Name</td>
+                    <td>@m.Stock</td>
+                    <td>@m.ExpiryDate.ToShortDateString()</td>
+                    <td>
+                        <form method="post" class="d-flex gap-1" asp-page-handler="Update">
+                            <input type="hidden" name="UpdateMedicineId" value="@m.Id" />
+                            <input type="number" class="form-control form-control-sm" placeholder="Stock" name="NewStock" min="0" />
+                            <input type="date" class="form-control form-control-sm" name="NewExpiryDate" />
+                            <button type="submit" class="btn btn-warning btn-sm">Update</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

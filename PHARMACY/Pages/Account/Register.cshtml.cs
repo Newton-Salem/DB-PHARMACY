@@ -16,7 +16,7 @@ namespace PHARMACY.Pages.Account
 
         public void OnPost()
         {
-            // Dummy Register Logic (No Database)
+            
             if (Input.Password != Input.ConfirmPassword)
             {
                 Message = "Passwords do not match!";

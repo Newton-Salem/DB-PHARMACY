@@ -1,0 +1,48 @@
+﻿@page
+@model PHARMACY.Pages.Customer.Orders.FeedbackModel
+@{
+    ViewData["Title"] = "Give Feedback";
+}
+
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>Give Feedback for Order #@Model.OrderId</h3>
+        </div>
+
+        <div class="card-body">
+
+           
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-info">@Model.Message</div>
+            }
+
+            
+            @if (!PHARMACY.Pages.Customer.Orders.FeedbackModel.Feedbacks.Any(f => f.OrderID == Model.OrderId))
+            {
+                <form method="post">
+                    <input type="hidden" asp-for="OrderId" />
+                    <div class="mb-3">
+                        <label class="form-label">Your Feedback</label>
+                        <textarea asp-for="FeedbackText" class="form-control" rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Submit Feedback</button>
+                    <a href="/Customer/Orders/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </form>
+
+                @if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div class="alert alert-info mt-3">@Model.Message</div>
+                }
+
+            }
+            else
+            {
+                <a href="/Customer/Orders/Index" class="btn btn-primary mt-3">Back to Orders</a>
+            }
+
+        </div>
+    </div>
+</div>

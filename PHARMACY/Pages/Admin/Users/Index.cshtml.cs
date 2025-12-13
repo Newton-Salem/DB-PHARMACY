@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PHARMACY.Pages.Admin.Users
 {
     public class IndexModel : PageModel
     {
-        // Simulate Users list (combine Customers + Suppliers)
+       
         public static List<User> Users = new List<User>
         {
             new User { Username = "user1", Name="Ahmed Ali", Role="Customer" },
@@ -29,6 +29,7 @@ namespace PHARMACY.Pages.Admin.Users
                 Response.Redirect("/Account/Login");
             }
 
+            // Filter users based on SearchTerm
             UsersList = string.IsNullOrEmpty(SearchTerm)
                 ? Users
                 : Users.Where(u => u.Username.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -49,7 +50,7 @@ namespace PHARMACY.Pages.Admin.Users
                 Users.Remove(user);
             }
 
-            return RedirectToPage();
+            return RedirectToPage(new { SearchTerm });
         }
     }
 
@@ -57,6 +58,6 @@ namespace PHARMACY.Pages.Admin.Users
     {
         public string Username { get; set; }
         public string Name { get; set; }
-        public string Role { get; set; } // "Customer" or "Supplier"
+        public string Role { get; set; } 
     }
 }

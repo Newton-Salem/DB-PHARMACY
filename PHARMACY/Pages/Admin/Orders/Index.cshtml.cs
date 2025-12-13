@@ -5,7 +5,7 @@ namespace PHARMACY.Pages.Admin.Orders
 {
     public class IndexModel : PageModel
     {
-        // Simulate Orders list
+       
         public static List<Order> OrdersList = new List<Order>
         {
             new Order { OrderID = 1, CustomerName = "Ahmed Ali", TotalAmount = 250, Status = "Pending" },

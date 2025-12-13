@@ -27,7 +27,7 @@ namespace PHARMACY.Pages.Account
 
         public IActionResult OnGet()
         {
-            // أي حد يدخل اللوجين => نعمله لوج اوت
+          
             HttpContext.Session.Clear();
             return Page();
         }

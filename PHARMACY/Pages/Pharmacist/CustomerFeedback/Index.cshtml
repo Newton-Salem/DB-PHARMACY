@@ -1,0 +1,38 @@
+﻿@page
+@model PHARMACY.Pages.Pharmacist.CustomerFeedback.IndexModel
+@{
+    ViewData["Title"] = "Customer Feedback";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Customer Feedback</h2>
+
+    @if (Model.Feedbacks.Count == 0)
+    {
+        <div class="alert alert-info text-center">
+            No feedbacks have been submitted yet.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model.Feedbacks)
+                {
+                    <tr>
+                        <td>@f.OrderID</td>
+                        <td>@f.CustomerName</td>
+                        <td>@f.FeedbackText</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

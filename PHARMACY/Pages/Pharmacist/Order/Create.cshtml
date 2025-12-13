@@ -1,0 +1,74 @@
+﻿@page
+@model PHARMACY.Pages.Pharmacist.Orders.CreateModel
+@{
+    ViewData["Title"] = "Order from Supplier";
+}
+
+<h2>Order from Supplier</h2>
+
+<form method="post" class="card p-3 mb-4">
+
+    <label>Supplier</label>
+    <select asp-for="NewOrder.SupplierName" class="form-control mb-2" required>
+        <option value="">-- Select Supplier --</option>
+        @foreach (var s in Model.Suppliers)
+        {
+            <option>@s</option>
+        }
+    </select>
+
+    <label>Medicine</label>
+    <select asp-for="NewOrder.MedicineName" class="form-control mb-2" required>
+        <option value="">-- Select Medicine --</option>
+        @foreach (var m in Model.Medicines)
+        {
+            <option>@m</option>
+        }
+    </select>
+
+    <label>Quantity</label>
+    <input asp-for="NewOrder.Quantity" type="number" class="form-control mb-2" min="1" required />
+
+    <button type="submit" class="btn btn-primary">Submit Order</button>
+</form>
+
+<h3 class="mt-4">All Orders</h3>
+<table class="table table-bordered text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Supplier</th>
+            <th>Medicine</th>
+            <th>Quantity</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in PHARMACY.Pages.Pharmacist.Orders.CreateModel.OrdersData)
+        {
+            <tr>
+                <td>@o.Id</td>
+                <td>@o.SupplierName</td>
+                <td>@o.MedicineName</td>
+                <td>@o.Quantity</td>
+                <td>@o.OrderDate.ToString("g")</td>
+                <td>@o.Status</td>
+                <td>
+                    @if (o.Status == "Pending")
+                    {
+                        <form method="post" class="d-inline">
+                            <input type="hidden" asp-for="CancelOrderId" value="@o.Id" />
+                            <button type="submit" asp-page-handler="Cancel" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No actions</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
