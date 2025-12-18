@@ -30,11 +30,11 @@
             @foreach (var m in Model.Medicines)
             {
                 <tr>
-                    <td>@m.Id</td>
+                    <td>@m.Medicine_ID</td>
                     <td>@m.Name</td>
-                    <td>@m.Stock</td>
+                    <td>@m.Stock_Quantity</td>
                     <td>@m.Price</td>
-                    <td>@m.Expiry.ToShortDateString()</td>
+                    <td>@m.Expiry_Date.ToShortDateString()</td>
                 </tr>
             }
         </tbody>

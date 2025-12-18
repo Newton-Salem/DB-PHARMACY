@@ -4,6 +4,15 @@
     ViewData["Title"] = "Register";
 }
 
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
         <div class="card shadow">
@@ -16,12 +25,12 @@
 
                     <div class="mb-3">
                         <label class="form-label">Full Name</label>
-                        <input asp-for="Input.Name" class="form-control" />
+                        <input asp-for="Input.Name" class="form-control" required />
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input asp-for="Input.Username" class="form-control" />
+                        <input asp-for="Input.Username" class="form-control" required />
                     </div>
 
                     <div class="mb-3">
@@ -41,12 +50,18 @@
 
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input asp-for="Input.Password" type="password" class="form-control" />
+                        <input asp-for="Input.Password"
+                               type="password"
+                               class="form-control"
+                               required />
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Confirm Password</label>
-                        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
+                        <input asp-for="Input.ConfirmPassword"
+                               type="password"
+                               class="form-control"
+                               required />
                     </div>
 
                     <button type="submit" class="btn btn-success w-100">
@@ -56,14 +71,16 @@
 
                 @if (!string.IsNullOrEmpty(Model.Message))
                 {
-                    <div class="alert alert-info mt-3 text-center">
+                    <div class="alert alert-danger mt-3 text-center">
                         @Model.Message
                     </div>
                 }
             </div>
 
             <div class="card-footer text-center">
-                <a asp-page="/Account/Login">Already have an account? Login</a>
+                <a asp-page="/Account/Login">
+                    Already have an account? Login
+                </a>
             </div>
         </div>
     </div>

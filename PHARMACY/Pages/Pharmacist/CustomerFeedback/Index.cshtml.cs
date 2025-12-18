@@ -1,42 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
 using System.Collections.Generic;
 
 namespace PHARMACY.Pages.Pharmacist.CustomerFeedback
 {
     public class IndexModel : PageModel
     {
-      
-        public List<FeedbackEntry> Feedbacks { get; set; }
+        FeedbackDAO dao = new();
+
+        public List<FeedbackEntry> Feedbacks { get; set; } = new();
 
         public IActionResult OnGet()
         {
-            var role = HttpContext.Session.GetString("Role");
-            if (string.IsNullOrEmpty(role) || role != "Pharmacist")
+            // 🔐 Security check
+            if (HttpContext.Session.GetString("Role") != "Pharmacist")
             {
                 HttpContext.Session.Clear();
                 return RedirectToPage("/Account/Login");
             }
 
-         
-            Feedbacks = PHARMACY.Pages.Customer.Orders.FeedbackModel.Feedbacks
-                .ConvertAll(f => new FeedbackEntry
+            var data = dao.GetAll();
+
+            foreach (var f in data)
+            {
+                Feedbacks.Add(new FeedbackEntry
                 {
                     OrderID = f.OrderID,
                     CustomerName = f.CustomerName,
-                    FeedbackText = f.FeedbackText
+                    FeedbackText = f.Message
                 });
+            }
 
             return Page();
         }
-
     }
 
-  
     public class FeedbackEntry
     {
         public int OrderID { get; set; }
-        public string CustomerName { get; set; }
-        public string FeedbackText { get; set; }
+        public string CustomerName { get; set; } = "";
+        public string FeedbackText { get; set; } = "";
     }
 }

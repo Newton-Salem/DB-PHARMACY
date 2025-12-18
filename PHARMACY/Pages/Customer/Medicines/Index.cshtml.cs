@@ -1,27 +1,30 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
+using PHARMACY.Models;
 using System.Collections.Generic;
 
 namespace PHARMACY.Pages.Customer.Medicines
 {
     public class IndexModel : PageModel
     {
-        public List<Medicine> Medicines { get; set; }
+        private readonly MedicineDAO _medicineDAO = new MedicineDAO();
+
+        public List<Medicine> Medicines { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public string SearchTerm { get; set; }
 
         public void OnGet()
         {
-            Medicines = new List<Medicine>
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
-                new Medicine{ Medicine_ID=1, Name="Paracetamol", Price=10 },
-                new Medicine{ Medicine_ID=2, Name="Ibuprofen", Price=20 },
-                new Medicine{ Medicine_ID=3, Name="Vitamin C", Price=15 }
-            };
+                Medicines = _medicineDAO.Search(SearchTerm);
+            }
+            else
+            {
+                Medicines = _medicineDAO.GetAll();
+            }
         }
-    }
-
-    public class Medicine
-    {
-        public int Medicine_ID { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
     }
 }

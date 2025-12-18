@@ -1,34 +1,46 @@
 ﻿@page
 @model PHARMACY.Pages.Customer.Orders.AddOrderModel
-@{
-    ViewData["Title"] = "Add New Order";
-}
 
-<div class="container mt-4">
-    <h2>Add New Order</h2>
+<h2>Add New Order</h2>
 
-    <form method="post">
- 
-        <input type="hidden" asp-for="MedicineID" />
-        <input type="hidden" asp-for="MedicineName" />
-        <input type="hidden" asp-for="UnitPrice" />
+<form method="post">
 
-        <div class="mb-3">
-            <label class="form-label">Medicine Name</label>
-            <input type="text" class="form-control" asp-for="MedicineName" readonly />
-        </div>
+    <!-- ID الحقيقي اللي بيتخزن -->
+    <input type="hidden" asp-for="MedicineID" />
 
-        <div class="mb-3">
-            <label class="form-label">Quantity</label>
-            <input type="number" class="form-control" asp-for="Quantity" min="1" value="1" required />
-        </div>
+    <!-- للعرض فقط -->
+    <input type="hidden" asp-for="UnitPrice" />
 
-        <div class="mb-3">
-            <label class="form-label">Price per unit</label>
-            <input type="number" class="form-control" asp-for="UnitPrice" readonly />
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Medicine Name</label>
+        <input asp-for="MedicineName" class="form-control" readonly />
+    </div>
 
-        <button type="submit" class="btn btn-primary">Place Order</button>
-        <a asp-page="/Customer/Orders/Index" class="btn btn-secondary ms-2">Cancel</a>
-    </form>
-</div>
+    <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input asp-for="Quantity"
+               type="number"
+               class="form-control"
+               min="1"
+               required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price per unit</label>
+        <input asp-for="UnitPrice"
+               type="number"
+               class="form-control"
+               readonly />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            Place Order
+        </button>
+
+        <a asp-page="/Customer/Orders/Index"
+           class="btn btn-secondary ms-2">
+            Cancel
+        </a>
+    </div>
+</form>

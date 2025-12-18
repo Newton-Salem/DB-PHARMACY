@@ -3,43 +3,38 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using PHARMACY.DAO;
 using PHARMACY.Model;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace PHARMACY.Pages.Admin.Orders
+namespace PHARMACY.Pages.Pharmacist.Orders
 {
-    public class IndexModel : PageModel
+    public class CustomerOrdersModel : PageModel
     {
         private readonly OrderDAO orderDAO = new();
 
         public List<Order> Orders { get; set; } = new();
 
-        [BindProperty(SupportsGet = true)]
-        public int? SearchID { get; set; }
-
         public IActionResult OnGet()
         {
             var role = HttpContext.Session.GetString("Role");
-            if (string.IsNullOrEmpty(role) || role != "Admin")
+
+            if (string.IsNullOrEmpty(role) || role != "Pharmacist")
             {
                 HttpContext.Session.Clear();
                 return RedirectToPage("/Account/Login");
             }
 
-            Orders = orderDAO.GetAllOrdersForAdmin();
-
-            if (SearchID.HasValue)
-            {
-                Orders = Orders
-                    .Where(o => o.OrderID == SearchID.Value)
-                    .ToList();
-            }
-
+            Orders = orderDAO.GetPendingOrdersForPharmacist();
             return Page();
         }
 
-        public IActionResult OnPostDelete(int orderId)
+        public IActionResult OnPostApprove(int orderId)
         {
-            orderDAO.DeleteOrder(orderId);
+            orderDAO.ApproveOrder(orderId);
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostCancel(int orderId)
+        {
+            orderDAO.CancelOrderPharmacist(orderId);
             return RedirectToPage();
         }
     }

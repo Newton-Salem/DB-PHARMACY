@@ -1,38 +1,40 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
+using PHARMACY.Model;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PHARMACY.Pages.Admin.Users
 {
     public class IndexModel : PageModel
     {
-       
-        public static List<User> Users = new List<User>
-        {
-            new User { Username = "user1", Name="Ahmed Ali", Role="Customer" },
-            new User { Username = "user2", Name="Sama Noor", Role="Customer" },
-            new User { Username = "user3", Name="Noor Salem", Role="Customer" },
-            new User { Username = "sup1", Name="Pharma One", Role="Supplier" },
-            new User { Username = "sup2", Name="Pharma Two", Role="Supplier" }
-        };
+        private readonly UserDAO userDAO = new();
 
-        public List<User> UsersList { get; set; }
+        public List<User> UsersList { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             var role = HttpContext.Session.GetString("Role");
             if (string.IsNullOrEmpty(role) || role != "Admin")
             {
                 HttpContext.Session.Clear();
-                Response.Redirect("/Account/Login");
+                return RedirectToPage("/Account/Login");
             }
 
-            // Filter users based on SearchTerm
-            UsersList = string.IsNullOrEmpty(SearchTerm)
-                ? Users
-                : Users.Where(u => u.Username.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            UsersList = userDAO.GetAllUsers();
+
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                UsersList = UsersList
+                    .Where(u => u.Username.Contains(SearchTerm, System.StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            return Page();
         }
 
         public IActionResult OnPostDelete(string username)
@@ -44,20 +46,8 @@ namespace PHARMACY.Pages.Admin.Users
                 return RedirectToPage("/Account/Login");
             }
 
-            var user = Users.FirstOrDefault(u => u.Username == username);
-            if (user != null)
-            {
-                Users.Remove(user);
-            }
-
+            userDAO.DeleteUser(username);
             return RedirectToPage(new { SearchTerm });
         }
-    }
-
-    public class User
-    {
-        public string Username { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; } 
     }
 }

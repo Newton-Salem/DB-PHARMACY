@@ -1,0 +1,13 @@
+﻿@page
+@model PHARMACY.Pages.Pharmacist.Orders.CreateModel
+
+<h2>Create Supplier Order</h2>
+
+<form method="post">
+    <div class="mb-2">
+        <label>Total Amount</label>
+        <input asp-for="NewOrder.Total" class="form-control" />
+    </div>
+
+    <button class="btn btn-success">Create</button>
+</form>
