@@ -3,11 +3,56 @@
 
 <h2>Create Supplier Order</h2>
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["Success"]
+    </div>
+}
+
 <form method="post">
-    <div class="mb-2">
-        <label>Total Amount</label>
-        <input asp-for="NewOrder.Total" class="form-control" />
+
+    <div class="mb-3">
+        <label class="form-label">Supplier</label>
+        <select asp-for="SupplierID" class="form-control" required>
+            <option value="">-- Select Supplier --</option>
+            @foreach (var s in Model.Suppliers)
+            {
+                <option value="@s.UserID">@s.CompanyName</option>
+            }
+        </select>
     </div>
 
-    <button class="btn btn-success">Create</button>
+    <div class="mb-3">
+        <label class="form-label">Medicine</label>
+        <select asp-for="MedicineID" class="form-control" required>
+            <option value="">-- Select Medicine --</option>
+            @foreach (var m in Model.Medicines)
+            {
+                <option value="@m.Medicine_ID">@m.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input asp-for="Quantity"
+               type="number"
+               min="1"
+               class="form-control"
+               required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Expected Delivery Date</label>
+        <input asp-for="RequestDate"
+               type="date"
+               class="form-control"
+               required />
+    </div>
+
+
+    <button type="submit" class="btn btn-success w-100">
+        Send Order
+    </button>
 </form>

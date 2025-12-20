@@ -1,0 +1,79 @@
+﻿@page "/Admin/Suppliers"
+@model PHARMACY.Pages.Admin.SupplierOrders.IndexModel
+@{
+    ViewData["Title"] = "Supplier Orders";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center">Supplier Orders</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success text-center">
+            @TempData["Message"]
+        </div>
+    }
+
+    <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Request ID</th>
+                <th>Supplier</th>
+                <th>Medicine</th>
+                <th>Quantity</th>
+                <th>Expected Date</th>
+                <th>Status</th>
+                <th style="width:120px;">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.Orders == null || Model.Orders.Count == 0)
+            {
+                <tr>
+                    <td colspan="7" class="text-muted">
+                        No supplier orders found
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var o in Model.Orders)
+                {
+                    <tr>
+                        <td>@o.RequestId</td>
+                        <td>@o.SupplierName</td>
+                        <td>@o.MedicineName</td>
+                        <td>@o.Quantity</td>
+                        <td>@o.RequestDate.ToShortDateString()</td>
+                        <td>
+                            @if (o.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (o.Status == "Approved")
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                        </td>
+                        <td>
+                            <form method="post"
+                                  asp-page-handler="Delete"
+                                  onsubmit="return confirm('Are you sure you want to delete this supplier order?');">
+                                <input type="hidden" name="requestId" value="@o.RequestId" />
+                                <button class="btn btn-danger btn-sm w-100">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

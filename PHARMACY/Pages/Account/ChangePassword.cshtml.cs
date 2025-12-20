@@ -1,14 +1,18 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
 
 namespace PHARMACY.Pages.Account
 {
     public class ChangePasswordModel : PageModel
     {
-        [BindProperty]
-        public ChangePasswordInput Input { get; set; }
+        private readonly UserDAO userDAO = new();
 
-        public string Message { get; set; }
+        [BindProperty]
+        public ChangePasswordInput Input { get; set; } = new();
+
+        public string Message { get; set; } = "";
+        public bool IsSuccess { get; set; }
 
         public IActionResult OnGet()
         {
@@ -21,24 +25,37 @@ namespace PHARMACY.Pages.Account
 
         public IActionResult OnPost()
         {
-           
-            var currentPassword = HttpContext.Session.GetString("Password") ?? "12345";
+            var username = HttpContext.Session.GetString("Username");
+            if (string.IsNullOrEmpty(username))
+                return RedirectToPage("/Account/Login");
 
-            if (Input.CurrentPassword != currentPassword)
+            string? dbPassword = userDAO.GetPasswordByUsername(username);
+
+            if (dbPassword == null)
+            {
+                Message = "User not found!";
+                IsSuccess = false;
+                return Page();
+            }
+
+            if (Input.CurrentPassword != dbPassword)
             {
                 Message = "Current password is incorrect!";
+                IsSuccess = false;
                 return Page();
             }
 
             if (Input.NewPassword != Input.ConfirmPassword)
             {
                 Message = "New passwords do not match!";
+                IsSuccess = false;
                 return Page();
             }
 
-    
-            HttpContext.Session.SetString("Password", Input.NewPassword);
-            Message = "Password changed successfully!";
+            userDAO.UpdatePassword(username, Input.NewPassword);
+
+            Message = "Password changed successfully ✔";
+            IsSuccess = true;
 
             return Page();
         }
@@ -46,8 +63,8 @@ namespace PHARMACY.Pages.Account
 
     public class ChangePasswordInput
     {
-        public string CurrentPassword { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmPassword { get; set; }
+        public string CurrentPassword { get; set; } = "";
+        public string NewPassword { get; set; } = "";
+        public string ConfirmPassword { get; set; } = "";
     }
 }

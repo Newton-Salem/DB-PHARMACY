@@ -15,24 +15,34 @@
     }
     else
     {
-        <table class="table table-bordered table-striped align-middle text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Feedback</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var f in Model.Feedbacks)
-                {
-                    <tr>
-                        <td>@f.OrderID</td>
-                        <td>@f.CustomerName</td>
-                        <td class="text-start">@f.FeedbackText</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <div class="row g-3">
+            @foreach (var f in Model.Feedbacks)
+            {
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between">
+                            <span>
+                                <strong>Order #@f.OrderID</strong>
+                            </span>
+                            <span>
+                                @* لو حابب بعدين تضيف تاريخ *@
+                                <i class="bi bi-chat-left-text"></i> Feedback
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="fw-bold mb-1">Customer: @f.CustomerName</p>
+
+                            <small class="text-muted d-block mb-2">
+                                @f.Date.ToString("dd MMM yyyy - hh:mm tt")
+                            </small>
+
+                            <p class="mb-0">@f.FeedbackText</p>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
     }
 </div>

@@ -1,0 +1,39 @@
+﻿@page
+@model PHARMACY.Pages.Pharmacist.Orders.SupplierOrdersModel
+
+<h2 class="mb-4">Supplier Orders</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["Success"]
+    </div>
+}
+
+<table class="table table-bordered text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Request #</th>
+            <th>Supplier</th>
+            <th>Medicine</th>
+            <th>Quantity</th>
+            <th>Expected Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model.Orders)
+        {
+            <tr>
+                <td>@o.RequestId</td>
+                <td>@o.SupplierName</td>
+                <td>@o.MedicineName</td>
+                <td>@o.Quantity</td>
+                <td>@o.RequestDate.ToShortDateString()</td>
+                <td>
+                    <span class="badge bg-warning">@o.Status</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

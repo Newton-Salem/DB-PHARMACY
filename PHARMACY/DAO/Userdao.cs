@@ -15,12 +15,16 @@ namespace PHARMACY.DAO
                                string address)
         {
             string query = @"
-                INSERT INTO [USER]
-                (USERNAME, PASSWORD, NAME, ROLE, Email, Phone, Address)
-                VALUES
-                (@Username, @Password, @Name, @Role, @Email, @Phone, @Address)
-            ";
+                    INSERT INTO [USER]
+                    ([USERNAME], [PASSWORD], [NAME], [ROLE], Email, Phone, [Address])
+                    OUTPUT INSERTED.UserID
+                    VALUES
+                    (@Username, @Password, @Name, @Role, @Email, @Phone, @Address)
+                    ";
 
+
+
+            int userId;
             using SqlConnection con = db.GetConnection();
             SqlCommand cmd = new SqlCommand(query, con);
 
@@ -33,7 +37,21 @@ namespace PHARMACY.DAO
             cmd.Parameters.AddWithValue("@Address", address);
 
             con.Open();
-            cmd.ExecuteNonQuery();
+            userId = (int)cmd.ExecuteScalar();
+
+
+
+
+            string customerQuery = @"
+INSERT INTO Customer (UserID, LoyaltyPoints, Gender, EmergencyPhone)
+VALUES (@UserID, 0, NULL, NULL)
+";
+
+            SqlCommand customerCmd = new SqlCommand(customerQuery, con);
+            customerCmd.Parameters.AddWithValue("@UserID", userId);
+            customerCmd.ExecuteNonQuery();
+
+
         }
 
         // LOGIN
@@ -131,5 +149,91 @@ namespace PHARMACY.DAO
             deleteUserCmd.ExecuteNonQuery();
         }
 
+
+
+
+
+        // 🔹 Get user password by username
+        public string? GetPasswordByUsername(string username)
+        {
+            string query = "SELECT [PASSWORD] FROM [USER] WHERE USERNAME = @username";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(query, con);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            con.Open();
+            object result = cmd.ExecuteScalar();
+            return result?.ToString();
+        }
+
+        // 🔹 Update password
+        public void UpdatePassword(string username, string newPassword)
+        {
+            string query = "UPDATE [USER] SET [PASSWORD] = @pass WHERE USERNAME = @username";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(query, con);
+            cmd.Parameters.AddWithValue("@pass", newPassword);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+        }
+
+
+
+
+        // 🔹 Get user profile
+        public User? GetUserByUsername(string username)
+        {
+            string query = @"
+        SELECT Name, Email, Phone, Address
+        FROM [USER]
+        WHERE Username = @username
+    ";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(query, con);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            con.Open();
+            using SqlDataReader r = cmd.ExecuteReader();
+
+            if (!r.Read()) return null;
+
+            return new User
+            {
+                Name = r.GetString(0),
+                Email = r.IsDBNull(1) ? "" : r.GetString(1),
+                Phone = r.IsDBNull(2) ? "" : r.GetString(2),
+                Address = r.IsDBNull(3) ? "" : r.GetString(3)
+            };
+        }
+
+        // 🔹 Update profile
+        public void UpdateProfile(string username, string name, string email, string phone, string address)
+        {
+            string query = @"
+        UPDATE [USER]
+        SET Name=@name,
+            Email=@email,
+            Phone=@phone,
+            Address=@address
+        WHERE Username=@username
+    ";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(query, con);
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@email", email);
+            cmd.Parameters.AddWithValue("@phone", phone);
+            cmd.Parameters.AddWithValue("@address", address);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+        }
     }
 }

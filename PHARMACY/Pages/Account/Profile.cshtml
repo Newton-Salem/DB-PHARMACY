@@ -4,28 +4,52 @@
     ViewData["Title"] = "Profile";
 }
 
-<div class="container mt-5" style="max-width: 600px;">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
-            <h3>User Profile</h3>
+<div class="container mt-5" style="max-width: 650px;">
+    <div class="card shadow border-0">
+
+        <!-- Header -->
+        <div class="card-header bg-dark text-white text-center">
+            <h4 class="mb-0">User Profile</h4>
         </div>
 
-        <div class="card-body">
-            <table class="table table-borderless mb-0">
+        <!-- Body -->
+        <div class="card-body p-4">
+
+            <!-- Avatar -->
+            <div class="text-center mb-4">
+                <div class="rounded-circle bg-secondary text-white d-inline-flex
+                            align-items-center justify-content-center"
+                     style="width:90px;height:90px;font-size:36px;">
+                    @Model.Username.FirstOrDefault()
+                </div>
+                <h5 class="mt-2 mb-0">@Model.Username</h5>
+                <small class="text-muted">@Model.Role</small>
+            </div>
+
+            <hr />
+
+            <!-- Info Table -->
+            <table class="table table-borderless mb-4">
                 <tr>
-                    <th class="text-start" style="width: 40%;">Username</th>
-                    <td class="text-start">@Model.Username</td>
+                    <th class="text-start" style="width:35%;">Username</th>
+                    <td class="text-start text-muted">@Model.Username</td>
                 </tr>
                 <tr>
                     <th class="text-start">Role</th>
-                    <td class="text-start">@Model.Role</td>
+                    <td class="text-start text-muted">@Model.Role</td>
                 </tr>
             </table>
-        </div>
 
-        <div class="card-footer text-center">
-            <a href="/Account/EditProfile" class="btn btn-outline-primary">Edit Profile</a>
-            <a href="/Account/ChangePassword" class="btn btn-outline-secondary ms-2">Change Password</a>
+            <!-- Actions -->
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/Account/EditProfile" class="btn btn-primary px-4">
+                    Edit Profile
+                </a>
+                <a href="/Account/ChangePassword" class="btn btn-outline-secondary px-4">
+                    Change Password
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

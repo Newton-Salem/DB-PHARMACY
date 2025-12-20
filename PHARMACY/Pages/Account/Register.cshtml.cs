@@ -1,65 +1,4 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.RazorPages;
-//using PHARMACY.DAO;
-
-//namespace PHARMACY.Pages.Account
-//{
-//    public class RegisterModel : PageModel
-//    {
-//        UserDAO dao = new();
-
-//        [BindProperty]
-//        public RegisterInput Input { get; set; }
-
-//        public string Message { get; set; }
-
-//        public void OnGet() { }
-
-//        public IActionResult OnPost()
-//        {
-//            // 1️⃣ validation
-//            if (string.IsNullOrEmpty(Input.Username) ||
-//                string.IsNullOrEmpty(Input.Password))
-//            {
-//                Message = "Please fill all required fields";
-//                return Page();
-//            }
-
-//            if (Input.Password != Input.ConfirmPassword)
-//            {
-//                Message = "Passwords do not match!";
-//                return Page();
-//            }
-
-//            // 2️⃣ username exists?
-//            if (dao.UsernameExists(Input.Username))
-//            {
-//                Message = "Username already exists!";
-//                return Page();
-//            }
-
-//            // 3️⃣ register
-//            dao.RegisterCustomer(
-//                Input.Name,
-//                Input.Username,
-//                Input.Password,
-//                Input.Email,
-//                Input.Phone,
-//                Input.Address
-//            );
-
-//            TempData["Success"] = "Account created successfully!";
-//            return RedirectToPage("/Account/Login");
-//        }
-//    }
-
-//    public class RegisterInput
-//    {
-//        public string Name { get; set; }
-//        public string Username { get; set; }
-//        public string Email { get; set; }
-//        public string
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PHARMACY.DAO;
 
@@ -105,10 +44,9 @@ namespace PHARMACY.Pages.Account
             );
 
             // 3️⃣ Success message
-            TempData["SuccessMessage"] =
-                "Account created successfully 🎉 Please login.";
+            TempData["SuccessMessage"] = "Account created successfully 🎉";
+            return Page(); // ⬅️ مهم جدًا
 
-            return RedirectToPage("/Account/Login");
         }
     }
 

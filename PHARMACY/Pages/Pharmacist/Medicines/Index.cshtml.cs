@@ -25,6 +25,9 @@ namespace PHARMACY.Pages.Pharmacist.Medicines
         public IActionResult OnPostAdd()
         {
             dao.Add(NewMedicine);
+
+            TempData["AddMessage"] = "Medicine added successfully ✅";
+
             return RedirectToPage();
         }
 

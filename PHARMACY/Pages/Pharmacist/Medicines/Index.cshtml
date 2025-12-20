@@ -3,45 +3,74 @@
 
 <h2 class="mb-4">Manage Medicines</h2>
 
+<!-- ✅ Success Messages -->
+@if (TempData["AddMessage"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["AddMessage"]
+    </div>
+}
+
+@if (TempData["UpdateMessage"] != null)
+{
+    <div class="alert alert-info text-center">
+        @TempData["UpdateMessage"]
+    </div>
+}
+
 <!-- 🔍 Search -->
 <form method="post" class="d-flex gap-2 mb-4">
     <input asp-for="SearchTerm" class="form-control" placeholder="Search medicine..." />
     <button asp-page-handler="Search" class="btn btn-primary">Search</button>
     <button asp-page-handler="OutOfStock" class="btn btn-danger">Out Of Stock</button>
-    
 </form>
 
 <!-- ➕ Add Medicine -->
 <form method="post" asp-page-handler="Add" class="card p-3 mb-4">
     <h5 class="mb-3">Add New Medicine</h5>
 
-    <div class="row g-2">
+    <div class="row g-2 align-items-end">
         <div class="col-md-3">
-            <input asp-for="NewMedicine.Name" class="form-control" placeholder="Name" required />
+            <label class="form-label">Name</label>
+            <input asp-for="NewMedicine.Name" class="form-control" required />
         </div>
+
         <div class="col-md-2">
-            <input asp-for="NewMedicine.Stock_Quantity" type="number" class="form-control" placeholder="Stock" required />
+            <label class="form-label">Stock</label>
+            <input asp-for="NewMedicine.Stock_Quantity"
+                   type="number"
+                   min="1"
+                   class="form-control"
+                   required />
         </div>
+
         <div class="col-md-2">
-            <input asp-for="NewMedicine.Price" type="number" step="0.01" class="form-control" placeholder="Price" required />
+            <label class="form-label">Price</label>
+            <input asp-for="NewMedicine.Price"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   class="form-control"
+                   required />
         </div>
+
         <div class="col-md-3">
-            <input asp-for="NewMedicine.Expiry_Date" type="date" class="form-control" required />
+            <label class="form-label">Expiry Date</label>
+            <input asp-for="NewMedicine.Expiry_Date"
+                   type="date"
+                   class="form-control"
+                   required />
         </div>
+
         <div class="col-md-2">
-            <button class="btn btn-success w-100">Add</button>
+            <button class="btn btn-success w-100">
+                ➕ Add
+            </button>
         </div>
     </div>
 </form>
 
 <!-- 📦 Medicines Table -->
-@if (TempData["UpdateMessage"] != null)
-{
-    <div class="alert alert-success text-center">
-        @TempData["UpdateMessage"]
-    </div>
-}
-
 <table class="table table-bordered table-striped text-center align-middle">
     <thead class="table-dark">
         <tr>
@@ -50,9 +79,10 @@
             <th>Stock</th>
             <th>Price</th>
             <th>Expiry Date</th>
-            <th>Update</th>
+            <th style="width: 320px;">Update</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var m in Model.Medicines)
         {
@@ -63,25 +93,35 @@
                 <td>@m.Price</td>
                 <td>@m.Expiry_Date.ToShortDateString()</td>
                 <td>
-                    <form method="post" asp-page-handler="Update" class="d-flex gap-1">
-                        <input type="hidden" name="UpdateMedicineId" value="@m.Medicine_ID" />
+                    <form method="post"
+                          asp-page-handler="Update"
+                          class="row g-1 align-items-center">
 
-                        <input name="NewStock"
-                               type="number"
-                               class="form-control"
-                               placeholder="New stock" />
+                        <input type="hidden"
+                               name="UpdateMedicineId"
+                               value="@m.Medicine_ID" />
 
-                        <input name="NewExpiryDate"
-                               type="date"
-                               class="form-control" />
+                        <div class="col-4">
+                            <input name="NewStock"
+                                   type="number"
+                                   class="form-control"
+                                   placeholder="Stock" />
+                        </div>
 
-                        <button class="btn btn-warning btn-sm">
-                            Update
-                        </button>
+                        <div class="col-5">
+                            <input name="NewExpiryDate"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-3">
+                            <button class="btn btn-warning btn-sm w-100">
+                                Update
+                            </button>
+                        </div>
                     </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-

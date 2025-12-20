@@ -257,28 +257,36 @@ namespace PHARMACY.DAO
             using SqlConnection con = db.GetConnection();
             con.Open();
 
-            // 1️⃣ امسح Payment المرتبط بالـ Order
+            // 0️⃣ Feedback
+            SqlCommand cmdFeedback = new(
+                "DELETE FROM Feedback WHERE Order_ID = @id", con);
+            cmdFeedback.Parameters.AddWithValue("@id", orderId);
+            cmdFeedback.ExecuteNonQuery();
+
+            // 1️⃣ Payment
             SqlCommand cmdPayment = new(
                 "DELETE FROM [Payment] WHERE Order_ID = @id", con);
             cmdPayment.Parameters.AddWithValue("@id", orderId);
             cmdPayment.ExecuteNonQuery();
 
-            // 2️⃣ امسح Order_Medicine
+            // 2️⃣ Order_Medicine
             SqlCommand cmdOM = new(
                 "DELETE FROM Order_Medicine WHERE Order_ID = @id", con);
             cmdOM.Parameters.AddWithValue("@id", orderId);
             cmdOM.ExecuteNonQuery();
 
-            // 3️⃣ امسح Notification المرتبط بالـ Order (لو بتستخدم Message فيها orderId)
+            // 3️⃣ Notification
             SqlCommand cmdNotif = new(
-                "DELETE FROM [NOTIFICATION] WHERE Message LIKE '%#" + orderId + "%'", con);
+                "DELETE FROM [NOTIFICATION] WHERE Message LIKE @msg", con);
+            cmdNotif.Parameters.AddWithValue("@msg", "%" + orderId + "%");
             cmdNotif.ExecuteNonQuery();
 
-            // 4️⃣ امسح الـ Order نفسه
+            // 4️⃣ Order (آخر حاجة)
             SqlCommand cmdOrder = new(
                 "DELETE FROM [Order] WHERE Order_ID = @id", con);
             cmdOrder.Parameters.AddWithValue("@id", orderId);
             cmdOrder.ExecuteNonQuery();
+
         }
 
 

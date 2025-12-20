@@ -2,6 +2,13 @@
 
 <h2>Pharmacist Dashboard</h2>
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["Success"]
+    </div>
+}
+
 <a asp-page="/Pharmacist/Orders/CustomerOrders" class="btn btn-primary">
     Customer Orders
 </a>

@@ -1,11 +1,7 @@
-﻿namespace PHARMACY.Models
+﻿public class FeedbackEntry
 {
-    public class Feedback
-    {
-        public int Feedback_ID { get; set; }
-        public int CustomerID { get; set; }
-        public int Order_ID { get; set; }
-        public string Message { get; set; } = "";
-        public DateTime Date { get; set; }
-    }
+    public int OrderID { get; set; }
+    public string CustomerName { get; set; } = "";
+    public string FeedbackText { get; set; } = "";
+    public DateTime Date { get; set; }
 }

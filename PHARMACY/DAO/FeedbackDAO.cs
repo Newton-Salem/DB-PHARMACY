@@ -56,15 +56,16 @@ namespace PHARMACY.DAO
 
 
         // GET ALL FEEDBACKS (Pharmacist / Admin)
-        public List<(int OrderID, string CustomerName, string Message)> GetAll()
+        public List<(int OrderID, string CustomerName, string Message, DateTime Date)> GetAll()
         {
-            List<(int, string, string)> list = new();
+            List<(int OrderID, string CustomerName, string Message, DateTime Date)> list = new();
 
             string query = @"
         SELECT
             F.Order_ID,
             U.Name,
-            F.Message
+            F.Message,
+            F.Date
         FROM Feedback F
         JOIN [USER] U ON F.CustomerID = U.UserID
         ORDER BY F.Date DESC
@@ -79,9 +80,10 @@ namespace PHARMACY.DAO
             while (reader.Read())
             {
                 list.Add((
-                    reader.GetInt32(0),   // Order_ID
-                    reader.GetString(1),  // Customer Name
-                    reader.GetString(2)   // Feedback Message
+                    reader.GetInt32(0),     // OrderID
+                    reader.GetString(1),    // CustomerName
+                    reader.GetString(2),    // Message
+                    reader.GetDateTime(3)   // Date
                 ));
             }
 

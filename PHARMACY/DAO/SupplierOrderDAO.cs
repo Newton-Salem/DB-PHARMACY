@@ -50,21 +50,43 @@ namespace PHARMACY.DAO
             return list;
         }
 
+
+        // 🔹 Delete supplier order (Admin)
+        public void Delete(int requestId)
+        {
+            using SqlConnection con = new(cs);
+            con.Open();
+
+            // 1️⃣ امسح الربط مع الدوا
+            SqlCommand cmdSRM = new(
+                "DELETE FROM SUPPLIER_REQUEST_MEDICINE WHERE Request_ID = @id", con);
+            cmdSRM.Parameters.AddWithValue("@id", requestId);
+            cmdSRM.ExecuteNonQuery();
+
+            // 2️⃣ امسح الطلب نفسه
+            SqlCommand cmdReq = new(
+                "DELETE FROM Supplier_Request WHERE Request_id = @id", con);
+            cmdReq.Parameters.AddWithValue("@id", requestId);
+            cmdReq.ExecuteNonQuery();
+        }
+
+
         // 🔹 Add new order
-        public void Add(int supplierId, int pharmacistId, int medicineId, int quantity)
+        public void Add(int supplierId, int pharmacistId, int medicineId, int quantity, DateTime requestDate)
         {
             using SqlConnection con = new(cs);
             con.Open();
 
             string insertRequest = @"
-                INSERT INTO Supplier_Request
-                (Request_Date, Status, Quantity, supplierID, PharmacistID)
-                VALUES (GETDATE(), 'Pending', @q, @s, @p);
+        INSERT INTO Supplier_Request
+        (Request_Date, Status, Quantity, supplierID, PharmacistID)
+        VALUES (@date, 'Pending', @q, @s, @p);
 
-                SELECT SCOPE_IDENTITY();
-            ";
+        SELECT SCOPE_IDENTITY();
+    ";
 
             SqlCommand cmd = new(insertRequest, con);
+            cmd.Parameters.AddWithValue("@date", requestDate);
             cmd.Parameters.AddWithValue("@q", quantity);
             cmd.Parameters.AddWithValue("@s", supplierId);
             cmd.Parameters.AddWithValue("@p", pharmacistId);
@@ -72,16 +94,17 @@ namespace PHARMACY.DAO
             int requestId = Convert.ToInt32(cmd.ExecuteScalar());
 
             string linkMedicine = @"
-                INSERT INTO SUPPLIER_REQUEST_MEDICINE
-                (Request_ID, Medicine_ID)
-                VALUES (@r, @m)
-            ";
+        INSERT INTO SUPPLIER_REQUEST_MEDICINE
+        (Request_ID, Medicine_ID)
+        VALUES (@r, @m)
+    ";
 
             SqlCommand cmd2 = new(linkMedicine, con);
             cmd2.Parameters.AddWithValue("@r", requestId);
             cmd2.Parameters.AddWithValue("@m", medicineId);
             cmd2.ExecuteNonQuery();
         }
+
 
         // 🔹 Cancel order
         public void Cancel(int requestId)

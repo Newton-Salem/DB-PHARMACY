@@ -4,17 +4,26 @@
     ViewData["Title"] = "Register";
 }
 
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success text-center">
-        @TempData["SuccessMessage"]
-    </div>
-}
-
-
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
+
+        @* ✅ Success Message + Auto Redirect *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                <strong>Success!</strong> @TempData["SuccessMessage"]
+                <br />
+                <small>You will be redirected to login page shortly...</small>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <script>
+                setTimeout(function () {
+                    window.location.href = '/Account/Login';
+                }, 6000); // ⏱️ 2 seconds
+            </script>
+        }
+
         <div class="card shadow">
             <div class="card-header text-center">
                 <h3>Create Account</h3>
@@ -69,6 +78,7 @@
                     </button>
                 </form>
 
+                @* ❌ Error Message *@
                 @if (!string.IsNullOrEmpty(Model.Message))
                 {
                     <div class="alert alert-danger mt-3 text-center">

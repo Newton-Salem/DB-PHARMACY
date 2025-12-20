@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PHARMACY.DAO;
 using PHARMACY.Model;
@@ -40,6 +40,9 @@ namespace PHARMACY.Pages.Admin.Orders
         public IActionResult OnPostDelete(int orderId)
         {
             orderDAO.DeleteOrder(orderId);
+
+            TempData["DeleteMessage"] = "Order deleted successfully ✅";
+
             return RedirectToPage();
         }
     }

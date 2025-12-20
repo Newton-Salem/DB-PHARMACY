@@ -26,11 +26,15 @@ namespace PHARMACY.Pages.Pharmacist.CustomerFeedback
             {
                 Feedbacks.Add(new FeedbackEntry
                 {
-                    OrderID = f.OrderID,
-                    CustomerName = f.CustomerName,
-                    FeedbackText = f.Message
+                    OrderID = f.Item1,
+                    CustomerName = f.Item2,
+                    FeedbackText = f.Item3,
+                    Date = f.Item4
                 });
             }
+
+
+
 
             return Page();
         }
@@ -41,5 +45,6 @@ namespace PHARMACY.Pages.Pharmacist.CustomerFeedback
         public int OrderID { get; set; }
         public string CustomerName { get; set; } = "";
         public string FeedbackText { get; set; } = "";
+        public DateTime Date { get; set; }
     }
 }
