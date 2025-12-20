@@ -26,7 +26,7 @@ namespace PHARMACY.Pages.Pharmacist.Medicines
         {
             dao.Add(NewMedicine);
 
-            TempData["AddMessage"] = "Medicine added successfully ✅";
+            TempData["SuccessMessage"] = "✅ Medicine added successfully";
 
             return RedirectToPage();
         }
@@ -38,7 +38,7 @@ namespace PHARMACY.Pages.Pharmacist.Medicines
 
             dao.Update(UpdateMedicineId, stock, expiry);
 
-            TempData["UpdateMessage"] = "Medicine updated successfully ✅";
+            TempData["SuccessMessage"] = "✏️ Medicine updated successfully";
             return RedirectToPage();
 
         }
@@ -51,11 +51,6 @@ namespace PHARMACY.Pages.Pharmacist.Medicines
                 ? dao.GetAll()
                 : dao.Search(SearchTerm);
         }
-
-        //public void OnPostOutOfStock()
-        //{
-        //    Medicines = dao.OutOfStock();
-        //}
 
 
 

@@ -1,39 +1,229 @@
 ﻿@page
 @model PHARMACY.Pages.Pharmacist.Orders.SupplierOrdersModel
-
-<h2 class="mb-4">Supplier Orders</h2>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success text-center">
-        @TempData["Success"]
-    </div>
+@{
+    ViewData["Title"] = "Supplier Orders";
 }
 
-<table class="table table-bordered text-center">
-    <thead class="table-dark">
-        <tr>
-            <th>Request #</th>
-            <th>Supplier</th>
-            <th>Medicine</th>
-            <th>Quantity</th>
-            <th>Expected Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var o in Model.Orders)
-        {
-            <tr>
-                <td>@o.RequestId</td>
-                <td>@o.SupplierName</td>
-                <td>@o.MedicineName</td>
-                <td>@o.Quantity</td>
-                <td>@o.RequestDate.ToShortDateString()</td>
-                <td>
-                    <span class="badge bg-warning">@o.Status</span>
-                </td>
-            </tr>
+
+<style>
+    @@keyframes fadeUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+</style>
+
+<style>
+    /* ===== Supplier Orders ===== */
+    .supplier-card {
+        border: none;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #ffffff, #f7f9ff);
+        box-shadow: 0 14px 35px rgba(13,110,253,.15);
+        transition: all .35s ease;
+        animation: fadeUp .6s ease;
+    }
+
+        .supplier-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 55px rgba(13,110,253,.25);
         }
-    </tbody>
-</table>
+
+    @@keyframes fadeUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .status-pill {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .approved {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-header {
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-id {
+        background: linear-gradient(135deg, #0d6efd, #5b8cff);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .order-body {
+        padding: 0 20px 18px;
+    }
+
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+
+        .order-row span {
+            color: #6c757d;
+        }
+</style>
+
+
+
+<div class="row g-4 mb-4">
+
+    <!-- Pending -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-center p-3"
+             style="border-radius:20px;background:linear-gradient(135deg,#fff3cd,#ffeeba);animation:fadeUp .5s;">
+            <h6 class="text-warning fw-bold mb-1">Pending Orders</h6>
+            <h2 class="fw-bold mb-0">
+                @Model.Orders.Count(o => o.Status == "Pending")
+            </h2>
+        </div>
+    </div>
+
+    <!-- Approved -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-center p-3"
+             style="border-radius:20px;background:linear-gradient(135deg,#d4edda,#c3e6cb);animation:fadeUp .6s;">
+            <h6 class="text-success fw-bold mb-1">Approved Orders</h6>
+            <h2 class="fw-bold mb-0">
+                @Model.Orders.Count(o => o.Status == "Approved")
+            </h2>
+        </div>
+    </div>
+
+    <!-- Cancelled -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-center p-3"
+             style="border-radius:20px;background:linear-gradient(135deg,#f8d7da,#f5c6cb);animation:fadeUp .7s;">
+            <h6 class="text-danger fw-bold mb-1">Cancelled Orders</h6>
+            <h2 class="fw-bold mb-0">
+                @Model.Orders.Count(o => o.Status == "Cancelled")
+            </h2>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center fw-bold">
+        🏭 Supplier Orders
+    </h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center mb-4">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (!Model.Orders.Any())
+    {
+        <div class="alert alert-info text-center">
+            No supplier orders available.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var o in Model.Orders)
+            {
+                var statusClass =
+                o.Status == "Approved" ? "approved" :
+                o.Status == "Cancelled" ? "cancelled" :
+                "pending";
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card supplier-card h-100">
+
+                        <!-- Header -->
+                        <div class="order-header">
+                            <span class="order-id">
+                                Request #@o.RequestId
+                            </span>
+                            <span class="status-pill @statusClass">
+                                @o.Status
+                            </span>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="order-body">
+
+                            <div class="order-row">
+                                <span>🏭 Supplier</span>
+                                <strong>@o.SupplierName</strong>
+                            </div>
+
+                            <div class="order-row">
+                                <span>💊 Medicine</span>
+                                <strong>@o.MedicineName</strong>
+                            </div>
+
+                            <div class="order-row">
+                                <span>📦 Quantity</span>
+                                <strong>@o.Quantity</strong>
+                            </div>
+
+                            <div class="order-row">
+                                <span>📅 Expected Date</span>
+                                <strong>@o.RequestDate.ToShortDateString()</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+</div>
+
+

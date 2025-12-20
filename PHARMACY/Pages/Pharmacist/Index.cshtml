@@ -1,18 +1,122 @@
 ﻿@page
-
-<h2>Pharmacist Dashboard</h2>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success text-center">
-        @TempData["Success"]
-    </div>
+@{
+    ViewData["Title"] = "Pharmacist Dashboard";
 }
 
-<a asp-page="/Pharmacist/Orders/CustomerOrders" class="btn btn-primary">
-    Customer Orders
-</a>
+<style>
+    /* ===== Animations ===== */
+    @@keyframes fadeUp {
+        from
 
-<a asp-page="/Pharmacist/Orders/Create" class="btn btn-success">
-    Create Supplier Order
-</a>
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .dash-card {
+        border-radius: 22px;
+        transition: all 0.35s ease;
+        animation: fadeUp 0.7s ease forwards;
+    }
+
+        .dash-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+    .dash-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .icon-orders {
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+    }
+
+    .icon-supplier {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .dash-btn {
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+
+        .dash-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+</style>
+
+<div class="container mt-4">
+
+    <h2 class="text-center fw-bold mb-2">
+        💊 Pharmacist Dashboard
+    </h2>
+    <p class="text-center text-muted mb-4">
+        Manage customer orders & supplier requests
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center mb-4">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- Customer Orders -->
+        <div class="col-md-5">
+            <div class="card dash-card text-center p-4 h-100">
+                <div class="dash-icon icon-orders mx-auto">
+                    🧾
+                </div>
+                <h4 class="fw-bold mb-2">
+                    Customer Orders
+                </h4>
+                <p class="text-muted mb-4">
+                    Review, approve or reject customer orders
+                </p>
+                <a asp-page="/Pharmacist/Orders/CustomerOrders"
+                   class="btn btn-success dash-btn px-4">
+                    View Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Supplier Orders -->
+        <div class="col-md-5">
+            <div class="card dash-card text-center p-4 h-100">
+                <div class="dash-icon icon-supplier mx-auto">
+                    🚚
+                </div>
+                <h4 class="fw-bold mb-2">
+                    Supplier Orders
+                </h4>
+                <p class="text-muted mb-4">
+                    Create and manage supplier medicine requests
+                </p>
+                <a asp-page="/Pharmacist/Orders/Create"
+                   class="btn btn-primary dash-btn px-4">
+                    Create Supplier Order
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

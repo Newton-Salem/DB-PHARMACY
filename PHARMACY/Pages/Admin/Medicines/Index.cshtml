@@ -4,40 +4,195 @@
     ViewData["Title"] = "Medicines Overview";
 }
 
+<!-- ===================== Styles ===================== -->
+<style>
+    body {
+        background: linear-gradient(135deg, #f4f8ff, #eef3fb);
+    }
+
+    .page-title {
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        transition: .35s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,0,0,.15);
+        }
+
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        color: #fff;
+    }
+
+    .bg-blue {
+        background: linear-gradient(135deg,#4f8cff,#7fb3ff);
+    }
+
+    .bg-orange {
+        background: linear-gradient(135deg,#f59e0b,#fbbf24);
+    }
+
+    .bg-red {
+        background: linear-gradient(135deg,#ef4444,#fca5a5);
+    }
+
+    .soft-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .search-box {
+        border-radius: 14px;
+        padding: 12px;
+    }
+
+    .medicine-table thead {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+    }
+
+    .medicine-table tbody tr {
+        transition: .25s;
+    }
+
+        .medicine-table tbody tr:hover {
+            background: #f3f7ff;
+            transform: scale(1.01);
+        }
+
+    .stock-high {
+        color: #16a34a;
+        font-weight: 600;
+    }
+
+    .stock-medium {
+        color: #f59e0b;
+        font-weight: 600;
+    }
+
+    .stock-low {
+        color: #dc2626;
+        font-weight: 700;
+    }
+</style>
+
+<!-- ===================== Content ===================== -->
 <div class="container mt-4">
 
-    <h2 class="mb-4 text-center">Medicines Overview</h2>
+    <h2 class="text-center page-title">💊 Medicines Management</h2>
 
-    <!-- Search Form -->
-    <form method="get" class="mb-3 d-flex">
-        <input type="text" name="SearchName" value="@Model.SearchName" class="form-control me-2" placeholder="Search by name" />
-        <button type="submit" class="btn btn-secondary">Search</button>
-    </form>
+    <!-- ===== Stats Cards ===== -->
+    <div class="row g-4 mb-4">
 
-    <!-- Medicines Table -->
-    <table class="table table-bordered table-striped text-center">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Stock</th>
-                <th>Price</th>
-                <th>Expiry Date</th>
-            </tr>
-        </thead>
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-blue">💊</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Total Medicines</h6>
+                    <h4 class="fw-bold">@Model.Medicines.Count</h4>
+                </div>
+            </div>
+        </div>
 
-        <tbody>
-            @foreach (var m in Model.Medicines)
-            {
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-orange">⚠️</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Low Stock</h6>
+                    <h4 class="fw-bold">
+                        @Model.Medicines.Count(m => m.Stock_Quantity < 20)
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-red">⏰</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Expiring Soon</h6>
+                    <h4 class="fw-bold">
+                        @Model.Medicines.Count(m => m.Expiry_Date < DateTime.Now.AddMonths(3))
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== Search ===== -->
+    <div class="soft-card">
+        <form method="get" class="d-flex gap-2">
+            <input type="text"
+                   name="SearchName"
+                   value="@Model.SearchName"
+                   class="form-control search-box"
+                   placeholder="🔍 Search medicine by name..." />
+            <button class="btn btn-primary px-4">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <!-- ===== Medicines Table ===== -->
+    <div class="soft-card">
+        <table class="table medicine-table text-center align-middle mb-0">
+            <thead>
                 <tr>
-                    <td>@m.Medicine_ID</td>
-                    <td>@m.Name</td>
-                    <td>@m.Stock_Quantity</td>
-                    <td>@m.Price</td>
-                    <td>@m.Expiry_Date.ToShortDateString()</td>
+                    <th>ID</th>
+                    <th>Medicine</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Expiry Date</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Medicines)
+                {
+                    <tr>
+                        <td>@m.Medicine_ID</td>
+                        <td class="fw-semibold">@m.Name</td>
+
+                        <td>
+                            @if (m.Stock_Quantity > 50)
+                            {
+                                <span class="stock-high">@m.Stock_Quantity</span>
+                            }
+                            else if (m.Stock_Quantity > 20)
+                            {
+                                <span class="stock-medium">@m.Stock_Quantity</span>
+                            }
+                            else
+                            {
+                                <span class="stock-low">@m.Stock_Quantity</span>
+                            }
+                        </td>
+
+                        <td>@m.Price</td>
+                        <td>@m.Expiry_Date.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
 </div>

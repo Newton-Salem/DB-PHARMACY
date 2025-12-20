@@ -32,6 +32,14 @@ namespace PHARMACY.Pages.Account
                 return Page();
             }
 
+            // ✅ Check if username already exists
+            if (dao.UsernameExists(Input.Username))
+            {
+                Message = "Username already exists. Please choose another one.";
+                return Page();
+            }
+
+
             // 2️⃣ Insert User (Customer by default)
             dao.InsertUser(
                 Input.Username,

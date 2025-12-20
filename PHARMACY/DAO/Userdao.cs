@@ -54,6 +54,26 @@ VALUES (@UserID, 0, NULL, NULL)
 
         }
 
+
+
+
+
+
+        public bool UsernameExists(string username)
+        {
+            string query = "SELECT COUNT(*) FROM [USER] WHERE Username = @Username";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@Username", username);
+
+            con.Open();
+            int count = (int)cmd.ExecuteScalar();
+
+            return count > 0;
+        }
+
+
         // LOGIN
         public SqlDataReader Login(string username, string password)
         {

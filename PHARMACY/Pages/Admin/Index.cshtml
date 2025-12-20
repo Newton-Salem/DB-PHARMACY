@@ -1,48 +1,142 @@
 ﻿@page
 @model PHARMACY.Pages.Admin.IndexModel
-
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container mt-4">
+<style>
+    body {
+        background: linear-gradient(135deg, #f3f7ff, #eef3fb);
+    }
 
-    <h2 class="mb-4 text-center">Admin Dashboard</h2>
+    .dashboard-card {
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 28px;
+        height: 185px;
+        transition: all 0.35s ease;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 
-    <div class="row">
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+        }
+
+    .icon-box {
+        width: 68px;
+        height: 68px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: #fff;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* 🌈 Soft Colors */
+    .bg-medicine {
+        background: linear-gradient(135deg, #4f8cff, #7fb3ff);
+    }
+
+    .bg-customer {
+        background: linear-gradient(135deg, #2fbf71, #6fdca3);
+    }
+
+    .bg-supplier {
+        background: linear-gradient(135deg, #f6a23d, #ffd08a);
+    }
+
+    .bg-order {
+        background: linear-gradient(135deg, #ff5a5a, #ff9a9a);
+    }
+
+    .dashboard-card h5 {
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+    .dashboard-card p {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-6px);
+        }
+
+        100% {
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="container mt-5">
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="dashboard-title">Admin Control Panel</h1>
+        <p class="dashboard-sub">Full control over pharmacy system</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4 justify-content-center mt-4">
 
         <div class="col-md-3">
-            <a href="/Admin/Medicines" class="text-decoration-none">
-                <div class="card text-center shadow p-3">
-                    <h5>Medicines</h5>
-                    <p>Manage pharmacy medicines</p>
+            <a href="/Admin/Medicines" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <div class="icon-box bg-medicine">💊</div>
+                    <div>
+                        <h5>Medicines</h5>
+                        <p>Manage pharmacy medicines</p>
+                    </div>
                 </div>
             </a>
         </div>
 
         <div class="col-md-3">
-            <a href="/Admin/Users" class="text-decoration-none">
-                <div class="card text-center shadow p-3">
-                    <h5>Customers</h5>
-                    <p>View & manage customers</p>
+            <a href="/Admin/Users" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <div class="icon-box bg-customer">👥</div>
+                    <div>
+                        <h5>Customers</h5>
+                        <p>View & manage users</p>
+                    </div>
                 </div>
             </a>
         </div>
 
         <div class="col-md-3">
-            <a href="/Admin/Suppliers" class="text-decoration-none">
-                <div class="card text-center shadow p-3">
-                    <h5>Suppliers</h5>
-                    <p>Manage medicine suppliers</p>
+            <a href="/Admin/Suppliers" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <div class="icon-box bg-supplier">🏭</div>
+                    <div>
+                        <h5>Suppliers</h5>
+                        <p>Control medicine suppliers</p>
+                    </div>
                 </div>
             </a>
         </div>
 
         <div class="col-md-3">
-            <a href="/Admin/Orders" class="text-decoration-none">
-                <div class="card text-center shadow p-3">
-                    <h5>Orders</h5>
-                    <p>View & track orders</p>
+            <a href="/Admin/Orders" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <div class="icon-box bg-order">📦</div>
+                    <div>
+                        <h5>Orders</h5>
+                        <p>Track & review orders</p>
+                    </div>
                 </div>
             </a>
         </div>

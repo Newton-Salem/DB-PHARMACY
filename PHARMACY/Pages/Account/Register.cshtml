@@ -2,49 +2,96 @@
 @model PHARMACY.Pages.Account.RegisterModel
 @{
     ViewData["Title"] = "Register";
+    Layout = null;
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Register | PHARMACY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        @* ✅ Success Message + Auto Redirect *@
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-                <strong>Success!</strong> @TempData["SuccessMessage"]
-                <br />
-                <small>You will be redirected to login page shortly...</small>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-            <script>
-                setTimeout(function () {
-                    window.location.href = '/Account/Login';
-                }, 6000); // ⏱️ 2 seconds
-            </script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        .fade-slide {
+            animation-name: fadeSlide;
+            animation-duration: 1.5s;
+            animation-timing-function: ease;
         }
 
-        <div class="card shadow">
-            <div class="card-header text-center">
-                <h3>Create Account</h3>
-            </div>
+        @@keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(25px);
+            }
 
-            <div class="card-body">
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+
+</head>
+
+<body style="background: linear-gradient(135deg, #e8f1ff, #f5f9ff);">
+
+    <div class="container d-flex justify-content-center align-items-center fade-slide"
+         style="min-height:100vh;">
+
+        <div class="col-md-6 col-lg-5">
+
+            <!-- ✅ Success Message -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success text-center fade show">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <strong> Success!</strong> @TempData["SuccessMessage"]
+                    <br />
+                    <small class="text-muted">Redirecting to login page...</small>
+                </div>
+
+                <script>
+                    setTimeout(function () {
+                        window.location.href = '/Account/Login';
+                    }, 6000);
+                </script>
+            }
+
+            <div class="card shadow-sm rounded-4 p-4">
+
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
+                    <h3 class="fw-bold text-primary mt-2 mb-0">Create Account</h3>
+                    <small class="text-muted">Join PHARMACY system</small>
+                </div>
+
+                <!-- Form -->
                 <form method="post">
 
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input asp-for="Input.Name" class="form-control" required />
-                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input asp-for="Input.Name" class="form-control" required />
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input asp-for="Input.Username" class="form-control" required />
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username</label>
+                            <input asp-for="Input.Username" class="form-control" required />
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input asp-for="Input.Email" class="form-control" />
+                        <input asp-for="Input.Email" type="email" class="form-control" />
                     </div>
 
                     <div class="mb-3">
@@ -57,41 +104,52 @@
                         <input asp-for="Input.Address" class="form-control" />
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input asp-for="Input.Password"
-                               type="password"
-                               class="form-control"
-                               required />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password</label>
+                            <input asp-for="Input.Password"
+                                   type="password"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input asp-for="Input.ConfirmPassword"
+                                   type="password"
+                                   class="form-control"
+                                   required />
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        <input asp-for="Input.ConfirmPassword"
-                               type="password"
-                               class="form-control"
-                               required />
-                    </div>
-
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-person-check-fill me-1"></i>
                         Register
                     </button>
                 </form>
 
-                @* ❌ Error Message *@
+                <!-- ❌ Error -->
                 @if (!string.IsNullOrEmpty(Model.Message))
                 {
-                    <div class="alert alert-danger mt-3 text-center">
+                    <div class="alert alert-danger text-center mt-3">
                         @Model.Message
                     </div>
                 }
-            </div>
 
-            <div class="card-footer text-center">
-                <a asp-page="/Account/Login">
-                    Already have an account? Login
-                </a>
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <span class="text-muted">Already have an account?</span>
+                    <a asp-page="/Account/Login"
+                       class="fw-semibold text-primary text-decoration-none">
+                        Login
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
-</div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

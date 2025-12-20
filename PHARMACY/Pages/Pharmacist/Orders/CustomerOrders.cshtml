@@ -1,71 +1,198 @@
 ﻿@page
 @model PHARMACY.Pages.Pharmacist.Orders.CustomerOrdersModel
-
 @{
     ViewData["Title"] = "Customer Orders";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Customer Orders</h2>
+<style>
+    /* ===== Colored Order Cards ===== */
+    .order-card {
+        border: none;
+        border-radius: 22px;
+        color: #fff;
+        transition: all .35s ease;
+        animation: slideUp .6s ease;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <table class="table table-striped table-bordered align-middle text-center">
-        <thead class="table-dark">
-            <tr>
-                <th>Order #</th>
-                <th>Medicine</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th style="width:180px;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    @@keyframes slideUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .order-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,.15), transparent);
+        pointer-events: none;
+    }
+
+    /* Status Colors */
+    .card-pending {
+        background: linear-gradient(135deg, #f6c343, #f39c12);
+        box-shadow: 0 15px 40px rgba(243,156,18,.4);
+    }
+
+    .card-completed {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        box-shadow: 0 15px 40px rgba(39,174,96,.4);
+    }
+
+    .card-cancelled {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        box-shadow: 0 15px 40px rgba(192,57,43,.4);
+    }
+
+    .order-card:hover {
+        transform: translateY(-8px) scale(1.02);
+    }
+
+    /* Header */
+    .order-header {
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-id {
+        font-size: 14px;
+        font-weight: 600;
+        background: rgba(255,255,255,.25);
+        padding: 6px 14px;
+        border-radius: 50px;
+    }
+
+    /* Body */
+    .order-body {
+        padding: 0 20px 20px;
+    }
+
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+
+        .order-row span {
+            opacity: .9;
+        }
+
+    /* Buttons */
+    .action-btn {
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all .25s ease;
+    }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center fw-bold">
+        🧾 Customer Orders
+    </h2>
+
+    @if (!Model.Orders.Any())
+    {
+        <div class="alert alert-info text-center">
+            No customer orders available.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
             @foreach (var o in Model.Orders)
             {
-                <tr>
-                    <td>@o.OrderID</td>
-                    <td>@o.MedicineName</td>
-                    <td>@o.Quantity</td>
-                    <td>@o.Total.ToString("C")</td>
-                    <td>
-                        @if (o.Status == "Pending")
-                        {
-                            <span class="badge bg-warning text-dark">Pending</span>
-                        }
-                        else if (o.Status == "Completed")
-                        {
-                            <span class="badge bg-success">Completed</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Cancelled</span>
-                        }
-                    </td>
-                    <td>@o.OrderDate.ToShortDateString()</td>
-                    <td>
-                        @if (o.Status == "Pending")
-                        {
-                            <div class="d-flex justify-content-center gap-2">
-                                <form method="post" asp-page-handler="Approve">
-                                    <input type="hidden" name="orderId" value="@o.OrderID" />
-                                    <button class="btn btn-success btn-sm">Approve</button>
-                                </form>
+                var cardClass = o.Status == "Pending"
+                ? "card-pending"
+                : o.Status == "Completed"
+                ? "card-completed"
+                : "card-cancelled";
 
-                                <form method="post" asp-page-handler="Cancel"
-                                      onsubmit="return confirm('Reject this order?');">
-                                    <input type="hidden" name="orderId" value="@o.OrderID" />
-                                    <button class="btn btn-danger btn-sm">Reject</button>
-                                </form>
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="order-card @cardClass h-100">
+
+                        <!-- Header -->
+                        <div class="order-header">
+                            <span class="order-id">
+                                Order #@o.OrderID
+                            </span>
+                            <strong>@o.Status</strong>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="order-body">
+                            <div class="order-row">
+                                <span>💊 Medicine</span>
+                                <strong>@o.MedicineName</strong>
                             </div>
-                        }
-                        else
-                        {
-                            <button class="btn btn-secondary btn-sm" disabled>No Actions</button>
-                        }
-                    </td>
-                </tr>
+
+                            <div class="order-row">
+                                <span>📦 Quantity</span>
+                                <strong>@o.Quantity</strong>
+                            </div>
+
+                            <div class="order-row">
+                                <span>💰 Total</span>
+                                <strong>@o.Total.ToString("C")</strong>
+                            </div>
+
+                            <div class="order-row mb-3">
+                                <span>📅 Date</span>
+                                <strong>@o.OrderDate.ToShortDateString()</strong>
+                            </div>
+
+                            <!-- Actions -->
+                            @if (o.Status == "Pending")
+                            {
+                                <div class="d-flex gap-2">
+                                    <form method="post" asp-page-handler="Approve" class="w-50">
+                                        <input type="hidden" name="orderId" value="@o.OrderID" />
+                                        <button class="btn btn-light w-100 action-btn">
+                                            ✔ Approve
+                                        </button>
+                                    </form>
+
+                                    <form method="post"
+                                          asp-page-handler="Cancel"
+                                          class="w-50"
+                                          onsubmit="return confirm('Reject this order?');">
+                                        <input type="hidden" name="orderId" value="@o.OrderID" />
+                                        <button class="btn btn-dark w-100 action-btn">
+                                            ✖ Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <button class="btn btn-light w-100 action-btn" disabled>
+                                    No Actions Available
+                                </button>
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
 </div>
