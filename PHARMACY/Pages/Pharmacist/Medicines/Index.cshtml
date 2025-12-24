@@ -8,15 +8,83 @@
     <div class="alert alert-success alert-dismissible fade show text-center mb-4"
          role="alert">
         @TempData["SuccessMessage"]
-        <button type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
-
 <style>
-    /* ===== Premium Table ===== */
+    /* ================= GLASS SEARCH ================= */
+    .search-glass {
+        background: rgba(255,255,255,0.75);
+        backdrop-filter: blur(14px);
+        border-radius: 22px;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.08);
+        transition: .35s ease;
+    }
+
+        .search-glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 70px rgba(0,0,0,.15);
+        }
+
+        .search-glass input,
+        .search-glass select {
+            border-radius: 14px;
+            transition: .25s;
+        }
+
+            .search-glass input:focus,
+            .search-glass select:focus {
+                transform: scale(1.03);
+                box-shadow: 0 0 0 4px rgba(13,110,253,.15);
+            }
+
+    /* ================= BUTTONS ================= */
+    .btn-search {
+        background: linear-gradient(135deg,#2563eb,#3b82f6);
+        color: #fff;
+        font-weight: 600;
+        border-radius: 14px;
+        transition: .3s;
+    }
+
+        .btn-search:hover {
+            transform: scale(1.07);
+            box-shadow: 0 15px 35px rgba(37,99,235,.45);
+        }
+
+    /* ================= ADD CARD ================= */
+    .add-card {
+        background: linear-gradient(135deg,#f8fbff,#eef4ff);
+        border-radius: 24px;
+        box-shadow: 0 22px 55px rgba(0,0,0,.08);
+        transition: .35s ease;
+    }
+
+        .add-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 35px 80px rgba(0,0,0,.15);
+        }
+
+        .add-card input,
+        .add-card select {
+            border-radius: 14px;
+        }
+
+    .add-btn {
+        background: linear-gradient(135deg,#22c55e,#16a34a);
+        color: white;
+        font-weight: 700;
+        border-radius: 18px;
+        transition: .3s;
+    }
+
+        .add-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 20px 45px rgba(34,197,94,.55);
+        }
+
+    /* ================= TABLE ================= */
     .premium-table {
         border-collapse: separate;
         border-spacing: 0 10px;
@@ -25,38 +93,37 @@
         .premium-table thead th {
             background: #0d6efd;
             color: #fff;
+            padding: 14px;
             border: none;
-            padding: 14px 12px;
-            font-weight: 600;
         }
 
         .premium-table tbody tr {
             background: #fff;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.05);
-            border-radius: 14px;
-            transition: transform .2s ease, box-shadow .2s ease;
+            border-radius: 16px;
+            box-shadow: 0 10px 28px rgba(0,0,0,.06);
+            animation: fadeRow .5s ease;
         }
+    @@keyframes fadeRow {
+        from
 
-            .premium-table tbody tr:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-            }
-
-        .premium-table td {
-            border: none;
-            padding: 14px 12px;
-            vertical-align: middle;
-        }
-
-    /* Pills */
-    .badge-pill {
-        padding: 6px 12px;
-        border-radius: 50px;
-        font-size: 12px;
-        font-weight: 600;
+    {
+        opacity: 0;
+        transform: translateY(15px);
     }
 
-    /* Expiry states */
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .premium-table tbody tr:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 45px rgba(0,0,0,.15);
+    }
+
+    /* Expiry */
     .expired {
         color: #dc3545;
         font-weight: 600;
@@ -71,107 +138,111 @@
         color: #198754;
         font-weight: 600;
     }
-
-    /* Update inputs */
-    .table-update input {
-        border-radius: 10px;
-    }
-
-    .table-update button {
-        border-radius: 10px;
-    }
 </style>
 
-
-
 <!-- 🔍 SEARCH + FILTER -->
-<div class="card soft-card p-3 mb-4">
-    <form method="post" class="row g-2 align-items-center">
-
-        <div class="col-md-6">
-            <input asp-for="SearchTerm"
-                   class="form-control"
-                   placeholder="🔍 Search medicine by name..." />
+<div class="card search-glass p-4 mb-4">
+    <form method="post" class="row g-3 align-items-center">
+        <div class="col-md-4">
+            <input asp-for="SearchTerm" class="form-control"
+                   placeholder="🔍 Search medicine..." />
         </div>
 
-        <div class="col-md-3 d-grid">
-            <button asp-page-handler="Search"
+        <div class="col-md-4">
+            <select asp-for="SelectedCategoryId" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button type="submit" asp-page-handler="Search"
+                    class="btn btn-search">
+                🔍 Search
+            </button>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button type="submit" asp-page-handler="Filter"
                     class="btn btn-primary">
-                Search
+                Apply
             </button>
         </div>
+    </form>
 
-        <div class="col-md-3 d-grid">
-            <button asp-page-handler="OutOfStock"
-                    class="btn btn-danger">
-                ⚠ Out Of Stock
-            </button>
-        </div>
-
+    <form method="post" asp-page-handler="OutOfStock" class="mt-3">
+        <button class="btn btn-danger w-100">
+            ⚠ Out Of Stock
+        </button>
     </form>
 </div>
 
 <!-- ➕ ADD MEDICINE -->
-<div class="card soft-card p-4 mb-4">
+<div class="card add-card p-4 mb-4">
     <h5 class="fw-bold mb-3">➕ Add New Medicine</h5>
 
     <form method="post" asp-page-handler="Add">
         <div class="row g-3 align-items-end">
 
             <div class="col-md-3">
-                <label class="form-label">Medicine Name</label>
-                <input asp-for="NewMedicine.Name"
-                       class="form-control"
-                       required />
+                <label class="form-label">Name</label>
+                <input asp-for="NewMedicine.Name" class="form-control" required />
             </div>
 
             <div class="col-md-2">
                 <label class="form-label">Stock</label>
                 <input asp-for="NewMedicine.Stock_Quantity"
-                       type="number"
-                       min="1"
-                       class="form-control"
-                       required />
+                       type="number" min="1"
+                       class="form-control" required />
             </div>
 
             <div class="col-md-2">
                 <label class="form-label">Price</label>
                 <input asp-for="NewMedicine.Price"
-                       type="number"
-                       step="0.01"
-                       min="0"
-                       class="form-control"
-                       required />
+                       type="number" step="0.01"
+                       class="form-control" required />
             </div>
 
             <div class="col-md-3">
-                <label class="form-label">Expiry Date</label>
+                <label class="form-label">Expiry</label>
                 <input asp-for="NewMedicine.Expiry_Date"
-                       type="date"
-                       class="form-control"
-                       required />
+                       type="date" class="form-control" required />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select asp-for="SelectedCategoryId"
+                        class="form-select" required>
+                    <option value="">-- Select Category --</option>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </select>
             </div>
 
             <div class="col-md-2 d-grid">
-                <button class="btn btn-success">
-                    ➕ Add
+                <button class="btn add-btn">
+                    🎉 Add Medicine
                 </button>
             </div>
-
         </div>
     </form>
 </div>
 
 <!-- 📦 MEDICINES TABLE -->
-<div class="card soft-card p-4">
+<div class="card p-4">
     <h5 class="fw-bold mb-3">📦 Medicines List</h5>
 
     <div class="table-responsive">
-        <table class="table premium-table align-middle text-center mb-0">
+        <table class="table premium-table text-center align-middle">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Medicine</th>
+                    <th>Name</th>
                     <th>Stock</th>
                     <th>Price</th>
                     <th>Expiry</th>
@@ -183,36 +254,29 @@
                 @foreach (var m in Model.Medicines)
                 {
                     var daysLeft = (m.Expiry_Date - DateTime.Now).Days;
-
                     <tr>
-                        <td class="text-muted">@m.Medicine_ID</td>
-
+                        <td>@m.Medicine_ID</td>
                         <td class="fw-semibold">@m.Name</td>
-
-                        <!-- Stock -->
                         <td>
                             @if (m.Stock_Quantity <= 0)
                             {
-                                <span class="badge bg-danger badge-pill">Out</span>
+                                <span class="badge bg-danger">Out Of Stock</span>
                             }
                             else if (m.Stock_Quantity < 10)
                             {
-                                <span class="badge bg-warning text-dark badge-pill">
+                                <span class="badge bg-warning text-dark">
                                     Low (@m.Stock_Quantity)
                                 </span>
                             }
                             else
                             {
-                                <span class="badge bg-success badge-pill">
+                                <span class="badge bg-success">
                                     @m.Stock_Quantity
                                 </span>
                             }
                         </td>
 
-                        <!-- Price -->
                         <td>@m.Price EGP</td>
-
-                        <!-- Expiry -->
                         <td>
                             @if (daysLeft < 0)
                             {
@@ -220,35 +284,26 @@
                             }
                             else if (daysLeft <= 30)
                             {
-                                <span class="expiring-soon">
-                                    ⏳ @daysLeft days
-                                </span>
+                                <span class="expiring-soon">⏳ @daysLeft days</span>
                             }
                             else
                             {
                                 <span class="expiry-safe">✔ Safe</span>
                             }
                         </td>
-
-                        <!-- Update -->
-                        <td style="min-width:260px;">
-                            <form method="post"
-                                  asp-page-handler="Update"
-                                  class="d-flex gap-2 table-update">
-
+                        <td>
+                            <form method="post" asp-page-handler="Update"
+                                  class="d-flex gap-2">
                                 <input type="hidden"
                                        name="UpdateMedicineId"
                                        value="@m.Medicine_ID" />
-
                                 <input name="NewStock"
                                        type="number"
                                        class="form-control form-control-sm"
                                        placeholder="Stock" />
-
                                 <input name="NewExpiryDate"
                                        type="date"
                                        class="form-control form-control-sm" />
-
                                 <button class="btn btn-warning btn-sm">
                                     Update
                                 </button>
@@ -260,4 +315,5 @@
         </table>
     </div>
 </div>
+
 

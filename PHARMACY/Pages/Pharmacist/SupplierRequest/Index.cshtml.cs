@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using PHARMACY.DAO;
 using PHARMACY.Model;
 
-namespace PHARMACY.Pages.Pharmacist.Orders
+namespace PHARMACY.Pages.Supplier.Order
 {
-    public class SupplierOrdersModel : PageModel
+    public class IndexModel : PageModel
     {
-        private readonly SupplierOrderDAO dao = new();
+        private readonly SupplierRequestDAO dao = new();
 
-        public List<SupplierOrder> Orders { get; set; } = new();
+        public List<Model.SupplierRequest> Orders { get; set; } = new();
 
         public IActionResult OnGet()
         {

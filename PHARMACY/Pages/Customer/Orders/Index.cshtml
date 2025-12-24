@@ -4,6 +4,18 @@
     ViewData["Title"] = "My Orders";
 }
 
+@if (TempData["OrderPlaced"] != null)
+{
+    <audio autoplay>
+        <source src="/sounds/order.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="alert alert-success text-center mt-3">
+        ✅ Order placed successfully
+    </div>
+}
+
+
 <style>
     /* ===== Orders UI ===== */
 
@@ -175,3 +187,15 @@
     </div>
 
 </div>
+<!-- 🎉 Celebration -->
+@if (TempData["OrderPlaced"] != null)
+{
+    <div class="alert alert-success text-center mt-4">
+        🎉 Your order has been placed successfully!
+    </div>
+
+    <audio autoplay>
+        <source src="/sounds/order.mp3" type="audio/mpeg">
+    </audio>
+}
+

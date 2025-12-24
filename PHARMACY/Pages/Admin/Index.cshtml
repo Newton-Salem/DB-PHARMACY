@@ -1,4 +1,5 @@
-﻿@page
+﻿
+@page
 @model PHARMACY.Pages.Admin.IndexModel
 @{
     ViewData["Title"] = "Admin Dashboard";
@@ -9,36 +10,102 @@
         background: linear-gradient(135deg, #f3f7ff, #eef3fb);
     }
 
+    /* ================== DASHBOARD CARDS ================== */
     .dashboard-card {
         background: #ffffff;
         border-radius: 22px;
-        padding: 28px;
-        height: 185px;
+        padding: 22px;
+        height: 170px;
         transition: all 0.35s ease;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        /* Entrance animation */
+        animation: cardFadeUp 0.7s ease forwards;
+        opacity: 0;
     }
 
-        .dashboard-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+        .dashboard-card:nth-child(1) {
+            animation-delay: 0.05s;
         }
 
+        .dashboard-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .dashboard-card:nth-child(3) {
+            animation-delay: 0.25s;
+        }
+
+        .dashboard-card:nth-child(4) {
+            animation-delay: 0.35s;
+        }
+
+    @@keyframes cardFadeUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(25px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    /* Soft glow on hover */
+    .dashboard-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 22px;
+        background: radial-gradient(circle at top left, rgba(79,140,255,0.18), transparent 60%);
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        pointer-events: none;
+    }
+
+    .dashboard-card:hover::after {
+        opacity: 1;
+    }
+
+    /* ================== ICON ================== */
     .icon-box {
-        width: 68px;
-        height: 68px;
-        border-radius: 18px;
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 32px;
+        font-size: 30px;
         color: #fff;
-        animation: float 3s ease-in-out infinite;
+        animation: breathe 4s ease-in-out infinite;
     }
 
-    /* 🌈 Soft Colors */
+    @@keyframes breathe {
+        0%,100%
+
+    {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+
+    }
+
     .bg-medicine {
         background: linear-gradient(135deg, #4f8cff, #7fb3ff);
     }
@@ -55,43 +122,59 @@
         background: linear-gradient(135deg, #ff5a5a, #ff9a9a);
     }
 
-    .dashboard-card h5 {
-        font-weight: 600;
-        margin-top: 15px;
+    /* ================== SMALL STATS ================== */
+    .mini-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+        height: 100%;
+        animation: fadeUp 0.6s ease forwards;
+        opacity: 0;
     }
 
-    .dashboard-card p {
+    @@keyframes fadeUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .mini-title {
         font-size: 14px;
         color: #6c757d;
-        margin-bottom: 0;
+        margin-bottom: 6px;
     }
 
-    @@keyframes float {
-        0% {
-            transform: translateY(0);
-        }
+    .mini-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e40af;
+    }
 
-        50% {
-            transform: translateY(-6px);
-        }
-
-        100% {
-            transform: translateY(0);
-        }
+    .chart-box {
+        height: 230px;
     }
 </style>
-
 
 <div class="container mt-5">
 
     <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="dashboard-title">Admin Control Panel</h1>
-        <p class="dashboard-sub">Full control over pharmacy system</p>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Admin Control Panel</h2>
+        <p class="text-muted">Full control over pharmacy system</p>
     </div>
 
-    <!-- Cards -->
-    <div class="row g-4 justify-content-center mt-4">
+    <!-- ===== MAIN CARDS (OLD UI PRESERVED) ===== -->
+    <div class="row g-4 justify-content-center mt-3">
 
         <div class="col-md-3">
             <a href="/Admin/Medicines" class="text-decoration-none text-dark">
@@ -99,7 +182,7 @@
                     <div class="icon-box bg-medicine">💊</div>
                     <div>
                         <h5>Medicines</h5>
-                        <p>Manage pharmacy medicines</p>
+                        <p class="text-muted mb-0">Manage pharmacy medicines</p>
                     </div>
                 </div>
             </a>
@@ -110,8 +193,8 @@
                 <div class="dashboard-card">
                     <div class="icon-box bg-customer">👥</div>
                     <div>
-                        <h5>Customers</h5>
-                        <p>View & manage users</p>
+                        <h5>Users</h5>
+                        <p class="text-muted mb-0">View & manage users</p>
                     </div>
                 </div>
             </a>
@@ -123,7 +206,7 @@
                     <div class="icon-box bg-supplier">🏭</div>
                     <div>
                         <h5>Suppliers</h5>
-                        <p>Control medicine suppliers</p>
+                        <p class="text-muted mb-0">Control suppliers</p>
                     </div>
                 </div>
             </a>
@@ -135,12 +218,67 @@
                     <div class="icon-box bg-order">📦</div>
                     <div>
                         <h5>Orders</h5>
-                        <p>Track & review orders</p>
+                        <p class="text-muted mb-0">Track & review orders</p>
                     </div>
                 </div>
             </a>
         </div>
-
     </div>
 
+    <!-- ===== SMALL STATS + CHART ===== -->
+    <div class="row g-4 mt-5">
+
+        <div class="col-md-4">
+            <div class="mini-card text-center">
+                <div class="mini-title">💰 Total Revenue</div>
+                <div class="mini-value">
+                    EGP @Model.TotalRevenue.ToString("N2")
+                </div>
+            </div>
+        </div>
+       
+
+
+        <div class="col-md-8">
+            <div class="mini-card">
+                <div class="mini-title mb-2">📊 Orders Overview</div>
+                <div class="chart-box">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('ordersChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Completed', 'Pending', 'Cancelled'],
+            datasets: [{
+                data: [
+                    @Model.CompletedOrders,
+                    @Model.PendingOrders,
+                    @Model.CancelledOrders
+                ],
+                backgroundColor: ['#4ade80', '#facc15', '#f87171'],
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            animation: { duration: 1200 }
+        }
+    });
+</script>

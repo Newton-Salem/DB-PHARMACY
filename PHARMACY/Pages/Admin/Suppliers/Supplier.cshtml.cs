@@ -8,9 +8,9 @@ namespace PHARMACY.Pages.Admin.SupplierOrders
 {
     public class IndexModel : PageModel
     {
-        SupplierOrderDAO dao = new();
+        SupplierRequestDAO dao = new();
 
-        public List<SupplierOrder> Orders { get; set; } = new();
+        public List<SupplierRequest> Orders { get; set; } = new();
 
         public IActionResult OnGet()
         {

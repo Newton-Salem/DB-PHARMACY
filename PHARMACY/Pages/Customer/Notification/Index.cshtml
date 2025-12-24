@@ -1,0 +1,37 @@
+﻿@page
+@model PHARMACY.Pages.Customer.Notification.IndexModel
+
+<h3 class="mb-4">🔔 Notifications</h3>
+
+@if (Model.Notifications.Count == 0)
+{
+    <div class="alert alert-light text-center">
+        No notifications yet
+    </div>
+}
+else
+{
+    foreach (var n in Model.Notifications)
+    {
+        <div class="card mb-2 @(n.Status == "Unread" ? "border-primary" : "")">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-semibold">@n.Message</div>
+                    <small class="text-muted">
+                        @n.Date.ToString("dd MMM yyyy - hh:mm tt")
+                    </small>
+                </div>
+
+                @if (n.Status == "Unread")
+                {
+                    <form method="post" asp-page-handler="Read">
+                        <input type="hidden" name="id" value="@n.NotificationID" />
+                        <button class="btn btn-sm btn-outline-primary">
+                            Mark as read
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+}

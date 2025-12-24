@@ -116,10 +116,20 @@
                     </div>
 
                     <!-- Actions -->
+
+
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary order-btn py-2">
+
+                        <audio id="orderSound" controls style="display:none;">
+                            <source src="success-1-6297.mp3" type="audio/mpeg">
+                        </audio>
+
+                        <button type="submit"
+                                class="btn btn-primary order-btn py-2"
+                                onclick="playOrderSound()">
                             🛒 Confirm Order
                         </button>
+
 
                         <a asp-page="/Customer/Orders/Index"
                            class="btn btn-outline-secondary cancel-btn py-2">

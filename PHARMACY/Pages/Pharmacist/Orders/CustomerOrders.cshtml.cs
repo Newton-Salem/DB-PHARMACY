@@ -28,13 +28,15 @@ namespace PHARMACY.Pages.Pharmacist.Orders
 
         public IActionResult OnPostApprove(int orderId)
         {
-            orderDAO.ApproveOrder(orderId);
+            int pharmacistId = HttpContext.Session.GetInt32("UserID").Value;
+            orderDAO.ApproveOrder(orderId, pharmacistId);
+
             return RedirectToPage();
         }
 
-        public IActionResult OnPostCancel(int orderId)
+        public IActionResult OnPostCancel(int orderId, int pharmacistId)
         {
-            orderDAO.CancelOrderPharmacist(orderId);
+            orderDAO.CancelOrderPharmacist(orderId,pharmacistId);
             return RedirectToPage();
         }
     }
