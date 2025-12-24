@@ -159,15 +159,22 @@
 
     <!-- ===== Search ===== -->
     <div class="soft-card">
-        <form method="get" class="d-flex gap-2">
+        <form method="get" class="d-flex gap-2 align-items-center">
             <input type="text"
                    name="SearchTerm"
                    value="@Model.SearchTerm"
                    class="form-control search-box"
                    placeholder="🔍 Search by username..." />
+
             <button class="btn btn-primary px-4">
                 Search
             </button>
+
+            <!-- ✅ Add Admin Button -->
+            <a asp-page="AddAdmin"
+               class="btn btn-success px-4 btn-soft">
+                ➕ Add Admin
+            </a>
         </form>
     </div>
 

@@ -5,8 +5,7 @@
 }
 
 <style>
-    /* ===== Customer Medicines Style ===== */
-
+    /* ===== Cards ===== */
     .medicine-card {
         border: none;
         border-radius: 18px;
@@ -49,39 +48,88 @@
         .order-btn:hover {
             transform: scale(1.05);
         }
+
+    /* ===== Filter Bar ===== */
+    .filter-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .btn-search {
+        background: linear-gradient(135deg, #198754, #20c997);
+        color: white;
+        border: none;
+        font-weight: 600;
+        border-radius: 12px;
+    }
+
+        .btn-search:hover {
+            background: linear-gradient(135deg, #157347, #1aa179);
+            color: white;
+        }
+
+    .btn-apply {
+        border-radius: 12px;
+        font-weight: 600;
+    }
 </style>
 
 <div class="container mt-4">
 
-    <!-- Page Title -->
+    <!-- Title -->
     <div class="text-center mb-4">
         <h2 class="fw-bold text-primary">💊 Medicines Catalog</h2>
         <p class="text-muted">Choose your medicine and order easily</p>
     </div>
 
-    <!-- Search -->
-    <form method="get" class="d-flex justify-content-center mb-4">
-        <input type="text"
-               name="SearchTerm"
-               value="@Model.SearchTerm"
-               class="form-control me-2"
-               style="max-width:320px; border-radius:12px;"
-               placeholder="Search medicine..." />
-        <button type="submit" class="btn btn-primary px-4" style="border-radius:12px;">
-            🔍 Search
-        </button>
-    </form>
+    <!-- 🔍 SEARCH + CATEGORY -->
+    <div class="card filter-card p-3 mb-4">
+        <form method="get" class="row g-2 align-items-center justify-content-center">
 
-    <!-- Medicines Cards -->
+            <!-- Search input -->
+            <div class="col-md-4">
+                <input asp-for="SearchTerm"
+                       class="form-control"
+                       placeholder="🔍 Search medicine by name..." />
+            </div>
+
+            <!-- 🔍 Search button -->
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-search">
+                    🔍 Search
+                </button>
+            </div>
+
+            <!-- Category -->
+            <div class="col-md-3">
+                <select asp-for="CategoryId" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Apply category -->
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary btn-apply">
+                    Apply
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- 💊 Medicines -->
     <div class="row g-4">
         @foreach (var m in Model.Medicines)
         {
             <div class="col-md-4 col-lg-3">
                 <div class="card medicine-card p-3 text-center h-100">
 
-                    <div class="medicine-icon mx-auto">
-                        💊
-                    </div>
+                    <div class="medicine-icon mx-auto">💊</div>
 
                     <h5 class="fw-bold mb-1">@m.Name</h5>
 

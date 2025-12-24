@@ -2,7 +2,14 @@
 @{
     var role = Context.Session.GetString("Role");
     var currentPath = Context.Request.Path.Value;
+    int notifCount = ViewData["NotifCount"] as int? ?? 0;
 }
+
+
+@* @{
+    var role = Context.Session.GetString("Role");
+    var currentPath = Context.Request.Path.Value;
+} *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,20 +84,154 @@
                 background: #fee2e2;
                 color: #991b1b;
             }
+
+
+        /* ===== Notification UI ===== */
+        .notif-panel {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            width: 320px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            padding: 15px;
+            display: none;
+            animation: slideDown 0.35s ease forwards;
+            z-index: 9999;
+        }
+
+        @@keyframes slideDown {
+
+            from{
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        .notif-item {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            transition: 0.25s;
+        }
+
+            .notif-item.unread {
+                background: #e0ecff;
+                font-weight: 500;
+            }
+
+            .notif-item:hover {
+                background: #dbeafe;
+            }
+
+
+        .notif-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+
+
+
+
+
     </style>
 </head>
+
+
+
+
+
 
 <body>
 
     <!-- Top Navbar -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm">
-            <div class="container-fluid">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+
                 <a class="navbar-brand fw-bold text-primary" asp-page="/Index">
                     💊 PHARMACY
                 </a>
+
+                <!-- 🔔 Notification Bell -->
+                <div class="position-relative">
+                    @if (role == "Pharmacist")
+                    {
+                        <a href="/Pharmacist/Notification/Index" class="btn btn-light position-relative">
+                            <i class="bi bi-bell fs-4"></i>
+
+                            @if (notifCount > 0)
+                            {
+                                <span class="notif-badge">@notifCount</span>
+                            }
+                            else
+                            {
+                                <span class="notif-dot"></span>
+                            }
+                        </a>
+                    }
+                    else if (role == "Customer")
+                    {
+                        <a href="/Customer/Notification/Index" class="btn btn-light position-relative">
+                            <i class="bi bi-bell fs-4"></i>
+
+                            @if (notifCount > 0)
+                            {
+                                <span class="notif-badge">@notifCount</span>
+                            }
+                            else
+                            {
+                                <span class="notif-dot"></span>
+                            }
+                        </a>
+                    }
+                </div>
+
+
+
+
+                    <!-- Notification Panel -->
+                    <div id="notifPanel" class="notif-panel">
+                        <h6 class="fw-bold mb-2">Notifications</h6>
+                        <div id="notifList">
+                            <p class="text-muted text-center">No notifications</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </nav>
+
     </header>
 
     <div class="d-flex">
@@ -137,6 +278,14 @@
                             <i class="bi bi-truck"></i> Suppliers
                         </a>
                     </li>
+
+                    <li>
+                        <a class="nav-link @(currentPath.Contains("/Admin/Reports") ? "active" : "")"
+                           href="/Admin/Reports/Index">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+
 
                     <li>
                         <a class="nav-link @(currentPath.Contains("/Account/Profile") ? "active" : "")"
@@ -211,7 +360,7 @@
 
                     <li>
                         <a class="nav-link @(currentPath.Contains("/Supplier/Order") ? "active" : "")"
-                           href="/Supplier/Order/Index">
+                           href="/Supplier/Orders/Index">
                             <i class="bi bi-truck"></i> Orders
                         </a>
                     </li>
@@ -252,9 +401,9 @@
                     </li>
 
                     <li>
-                        <a class="nav-link @(currentPath.Contains("/Pharmacist/SupplierOrders") ? "active" : "")"
-                           href="/Pharmacist/SupplierOrders/SupplierOrders">
-                            <i class="bi bi-truck"></i> Supplier Orders
+                        <a class="nav-link @(currentPath.Contains("/Pharmacist/SupplierRequest") ? "active" : "")"
+                           href="/Pharmacist/SupplierRequest/Index">
+                            <i class="bi bi-truck"></i> Supplier Request
                         </a>
                     </li>
 

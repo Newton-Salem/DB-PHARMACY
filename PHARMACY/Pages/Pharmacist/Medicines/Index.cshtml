@@ -16,6 +16,27 @@
 
 
 <style>
+
+
+
+    
+    .btn-search-green {
+        background: linear-gradient(135deg, #198754, #20c997);
+        color: white;
+        border: none;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-search-green:hover {
+            background: linear-gradient(135deg, #157347, #1aa179);
+            transform: scale(1.05);
+            color: white;
+        }
+
+
+
     /* ===== Premium Table ===== */
     .premium-table {
         border-collapse: separate;
@@ -86,29 +107,60 @@
 
 <!-- 🔍 SEARCH + FILTER -->
 <div class="card soft-card p-3 mb-4">
-    <form method="post" class="row g-2 align-items-center">
 
-        <div class="col-md-6">
-            <input asp-for="SearchTerm"
-                   class="form-control"
-                   placeholder="🔍 Search medicine by name..." />
-        </div>
+    
 
-        <div class="col-md-3 d-grid">
-            <button asp-page-handler="Search"
-                    class="btn btn-primary">
-                Search
-            </button>
-        </div>
 
-        <div class="col-md-3 d-grid">
-            <button asp-page-handler="OutOfStock"
-                    class="btn btn-danger">
-                ⚠ Out Of Stock
-            </button>
-        </div>
+    <form method="post" class="row g-2 align-items-center mb-4">
+
+    <!-- 🔍 Search input -->
+    <div class="col-md-4">
+        <input asp-for="SearchTerm"
+               class="form-control"
+               placeholder="🔍 Search medicine by name..." />
+    </div>
+
+    <!-- 📂 Category -->
+    <div class="col-md-4">
+        <select asp-for="SelectedCategoryId"
+                class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- 🔍 SEARCH BUTTON -->
+    <div class="col-md-2 d-grid">
+        <button type="submit"
+                asp-page-handler="Search"
+                class="btn btn-search">
+            🔍 Search
+        </button>
+    </div>
+
+    <!-- 📂 FILTER BUTTON -->
+    <div class="col-md-2 d-grid">
+        <button type="submit"
+                asp-page-handler="Filter"
+                class="btn btn-primary">
+            Apply
+        </button>
+    </div>
 
     </form>
+    
+
+
+    <form method="post" asp-page-handler="OutOfStock">
+        <button class="btn btn-danger w-100">
+            ⚠ Out Of Stock
+        </button>
+    </form>
+
+
 </div>
 
 <!-- ➕ ADD MEDICINE -->
@@ -178,6 +230,9 @@
                     <th>Update</th>
                 </tr>
             </thead>
+
+            
+
 
             <tbody>
                 @foreach (var m in Model.Medicines)

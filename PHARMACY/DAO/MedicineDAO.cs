@@ -88,23 +88,55 @@ namespace PHARMACY.DAO
         }
 
         // ADD 
-        public void Add(Medicine m)
+        //public void Add(Medicine m)
+        //{
+        //    string query = @"
+        //        INSERT INTO Medicine (Name, Stock_Quantity, Price, Expiry_Date)
+        //        VALUES (@n, @s, @p, @e)";
+
+        //    using SqlConnection con = db.GetConnection();
+        //    SqlCommand cmd = new(query, con);
+
+        //    cmd.Parameters.AddWithValue("@n", m.Name);
+        //    cmd.Parameters.AddWithValue("@s", m.Stock_Quantity);
+        //    cmd.Parameters.AddWithValue("@p", m.Price);
+        //    cmd.Parameters.AddWithValue("@e", m.Expiry_Date);
+
+        //    con.Open();
+        //    cmd.ExecuteNonQuery();
+        //}
+
+
+
+        // ADD WITH CATEGORY  ✅ (جديد)
+        public void AddWithCategory(Medicine m, int categoryId)
         {
-            string query = @"
-                INSERT INTO Medicine (Name, Stock_Quantity, Price, Expiry_Date)
-                VALUES (@n, @s, @p, @e)";
-
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
-
-            cmd.Parameters.AddWithValue("@n", m.Name);
-            cmd.Parameters.AddWithValue("@s", m.Stock_Quantity);
-            cmd.Parameters.AddWithValue("@p", m.Price);
-            cmd.Parameters.AddWithValue("@e", m.Expiry_Date);
-
             con.Open();
-            cmd.ExecuteNonQuery();
+
+            // 1️⃣ Add medicine
+            string q1 = @"
+        INSERT INTO Medicine (Name, Stock_Quantity, Price, Expiry_Date)
+        VALUES (@n,@s,@p,@e);
+        SELECT SCOPE_IDENTITY();";
+
+            SqlCommand cmd1 = new(q1, con);
+            cmd1.Parameters.AddWithValue("@n", m.Name);
+            cmd1.Parameters.AddWithValue("@s", m.Stock_Quantity);
+            cmd1.Parameters.AddWithValue("@p", m.Price);
+            cmd1.Parameters.AddWithValue("@e", m.Expiry_Date);
+
+            int medicineId = Convert.ToInt32(cmd1.ExecuteScalar());
+
+            // 2️⃣ Link with category
+            string q2 = "INSERT INTO MEDICINE_CATEGORY VALUES (@m,@c)";
+            SqlCommand cmd2 = new(q2, con);
+            cmd2.Parameters.AddWithValue("@m", medicineId);
+            cmd2.Parameters.AddWithValue("@c", categoryId);
+
+            cmd2.ExecuteNonQuery();
         }
+
 
         // UPDATE
         public void Update(int id, int? stock, DateTime? expiry)
@@ -169,6 +201,41 @@ namespace PHARMACY.DAO
                 });
             }
 
+            return list;
+        }
+
+
+
+        public List<Medicine> GetByCategory(int categoryId)
+        {
+            List<Medicine> list = new();
+
+            string q = @"
+        SELECT M.Medicine_ID, M.Name, M.Price, M.Stock_Quantity, M.Expiry_Date, C.Category_Name
+        FROM Medicine M
+        JOIN MEDICINE_CATEGORY MC ON M.Medicine_ID = MC.Medicine_ID
+        JOIN Category C ON MC.Category_ID = C.Category_ID
+        WHERE C.Category_ID = @cid";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(q, con);
+            cmd.Parameters.AddWithValue("@cid", categoryId);
+
+            con.Open();
+            var r = cmd.ExecuteReader();
+
+            while (r.Read())
+            {
+                list.Add(new Medicine
+                {
+                    Medicine_ID = (int)r["Medicine_ID"],
+                    Name = r["Name"].ToString()!,
+                    Price = (decimal)r["Price"],
+                    Stock_Quantity = (int)r["Stock_Quantity"],
+                    Expiry_Date = (DateTime)r["Expiry_Date"],
+                    Category_Name = r["Category_Name"].ToString()
+                });
+            }
             return list;
         }
 

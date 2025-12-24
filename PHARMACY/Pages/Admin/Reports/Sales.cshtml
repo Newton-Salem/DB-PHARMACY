@@ -1,0 +1,43 @@
+﻿@page
+@model PHARMACY.Pages.Admin.Reports.SalesModel
+
+<h3 class="fw-bold mb-1">💰 Sales Report</h3>
+<p class="text-muted mb-4">📅 @Model.ReportMonth</p>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="mini-card text-center">
+            <div class="mini-title">Total Revenue</div>
+            <div class="mini-value">EGP @Model.TotalRevenue.ToString("N2")</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="mini-card text-center">
+            <div class="mini-title">Completed Orders</div>
+            <div class="mini-value">@Model.CompletedOrders</div>
+        </div>
+    </div>
+</div>
+
+<h5 class="fw-bold mb-3">📋 Sales by Pharmacist</h5>
+
+<table class="table table-hover text-center align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Pharmacist</th>
+            <th>Orders</th>
+            <th>Total Sales (EGP)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.PharmacistSales)
+        {
+            <tr>
+                <td class="fw-semibold">@p.PharmacistName</td>
+                <td>@p.OrdersCount</td>
+                <td>@p.TotalSales.ToString("N2")</td>
+            </tr>
+        }
+    </tbody>
+</table>

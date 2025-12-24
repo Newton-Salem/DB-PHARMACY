@@ -8,22 +8,38 @@ namespace PHARMACY.Pages.Customer.Medicines
 {
     public class IndexModel : PageModel
     {
-        private readonly MedicineDAO _medicineDAO = new MedicineDAO();
+        private readonly MedicineDAO medicineDAO = new();
+        private readonly CategoryDAO categoryDAO = new();
 
+        // ===== DATA =====
         public List<Medicine> Medicines { get; set; } = new();
+        public List<(int Id, string Name)> Categories { get; set; } = new();
+
+        // ===== FILTERS =====
+        [BindProperty(SupportsGet = true)]
+        public string? SearchTerm { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string SearchTerm { get; set; }
+        public int? CategoryId { get; set; }
 
+        // ===== GET =====
         public void OnGet()
         {
-            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            // Load categories always
+            Categories = categoryDAO.GetAll();
+
+            // Filter logic
+            if (CategoryId.HasValue)
             {
-                Medicines = _medicineDAO.Search(SearchTerm);
+                Medicines = medicineDAO.GetByCategory(CategoryId.Value);
+            }
+            else if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                Medicines = medicineDAO.Search(SearchTerm.Trim());
             }
             else
             {
-                Medicines = _medicineDAO.GetAll();
+                Medicines = medicineDAO.GetAll();
             }
         }
     }

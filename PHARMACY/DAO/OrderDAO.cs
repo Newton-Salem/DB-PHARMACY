@@ -10,10 +10,20 @@ namespace PHARMACY.DAO
         DB db = DB.Instance;
 
         // ================= Add Order (Customer) =================
+
+
+
+
         public void AddOrder(Order order, int medicineId)
         {
             using SqlConnection con = db.GetConnection();
             con.Open();
+
+            // ✔️ ضمان وجود صيدلي
+            if (order.PharmacistID <= 0)
+            {
+                order.PharmacistID = GetAnyPharmacistId(con);
+            }
 
             // 1️⃣ Insert Order
             string orderQuery = @"
@@ -47,9 +57,17 @@ namespace PHARMACY.DAO
             omCmd.Parameters.AddWithValue("@oid", orderId);
             omCmd.Parameters.AddWithValue("@mid", medicineId);
             omCmd.Parameters.AddWithValue("@qty", order.Quantity);
-
             omCmd.ExecuteNonQuery();
+            Console.WriteLine("PHARMACIST ID = " + order.PharmacistID);
+            // 🔔 Notification للصيدلي
+            NotificationDAO notificationDAO = new NotificationDAO();
+            notificationDAO.Add(
+                order.PharmacistID,
+                $"New order from customer #{order.CustomerID}",
+                "Order"
+            );
         }
+
 
 
 
@@ -135,6 +153,9 @@ namespace PHARMACY.DAO
                     Total = reader.GetDecimal(3),
                     Status = reader.GetString(4),
                     OrderDate = reader.GetDateTime(5)
+
+
+
                 });
             }
 
@@ -142,14 +163,41 @@ namespace PHARMACY.DAO
         }
 
         // ================= Pharmacist Actions =================
-        public void ApproveOrder(int orderId)
+        public void ApproveOrder(int orderId, int pharmacistId)
         {
-            UpdateStatus(orderId, "Completed");
+            // 1️⃣ حدّث حالة الأوردر + الصيدلي اللي وافق
+            UpdateStatusAndPharmacist(orderId, "Completed", pharmacistId);
+
+            // 2️⃣ أضف Payment مربوط بالصيدلي ده
+            DashboardDAO dashboardDAO = new DashboardDAO();
+            dashboardDAO.AddPaymentForCompletedOrder(orderId);
+
+            // 3️⃣ Notification للعميل
+            int customerId = GetCustomerIdByOrder(orderId);
+
+            NotificationDAO notificationDAO = new NotificationDAO();
+            notificationDAO.Add(
+                customerId,
+                $"Your order #{orderId} has been approved",
+                "Order"
+            );
         }
 
-        public void CancelOrderPharmacist(int orderId)
+
+
+
+        public void CancelOrderPharmacist(int orderId,int pharmacistId)
         {
-            UpdateStatus(orderId, "Cancelled");
+            UpdateStatusAndPharmacist( orderId,"Cancelled",  pharmacistId);
+
+            int customerId = GetCustomerIdByOrder(orderId);
+
+            NotificationDAO notificationDAO = new NotificationDAO();
+            notificationDAO.Add(
+                customerId,
+                $"Your order #{orderId} has been cancelled",
+                "Order"
+            );
         }
 
         // ================= Customer Cancel =================
@@ -170,19 +218,24 @@ namespace PHARMACY.DAO
         }
 
         // ================= Shared =================
-        private void UpdateStatus(int orderId, string status)
+        
+        /// /////////////
+        
+        private void UpdateStatusAndPharmacist(int orderId, string status, int pharmacistId)
         {
             string query = @"
-                UPDATE dbo.[Order]
-                SET Status = @status
-                WHERE Order_ID = @id
-            ";
+        UPDATE [Order]
+        SET Status = @status,
+            PharmacistID = @pharmacistId
+        WHERE Order_ID = @orderId
+    ";
 
             using SqlConnection con = db.GetConnection();
             SqlCommand cmd = new(query, con);
 
             cmd.Parameters.AddWithValue("@status", status);
-            cmd.Parameters.AddWithValue("@id", orderId);
+            cmd.Parameters.AddWithValue("@pharmacistId", pharmacistId);
+            cmd.Parameters.AddWithValue("@orderId", orderId);
 
             con.Open();
             cmd.ExecuteNonQuery();
@@ -288,6 +341,77 @@ namespace PHARMACY.DAO
             cmdOrder.ExecuteNonQuery();
 
         }
+
+
+
+
+        public List<Order> GetOrdersForSupplier(int supplierId)
+        {
+            List<Order> orders = new();
+
+            string query = @"
+        SELECT 
+    O.Order_ID,
+    M.Name,
+    OM.Quantity,
+    O.Total_Amount,
+    O.Status,
+    O.ORDER_Date
+FROM [Order] O
+JOIN Order_Medicine OM ON O.Order_ID = OM.Order_ID
+JOIN Medicine M ON OM.Medicine_ID = M.Medicine_ID
+WHERE O.PharmacistID = @sid
+
+    ";
+
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(query, con);
+            cmd.Parameters.AddWithValue("@sid", supplierId);
+
+            con.Open();
+            using SqlDataReader r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                orders.Add(new Order
+                {
+                    OrderID = r.GetInt32(0),
+                    MedicineName = r.GetString(1),
+                    Quantity = r.GetInt32(2),
+                    Total = r.GetDecimal(3),
+                    Status = r.GetString(4),
+                    OrderDate = r.GetDateTime(5)
+                });
+
+            }
+
+            return orders;
+        }
+
+
+
+
+        private int GetCustomerIdByOrder(int orderId)
+        {
+            using SqlConnection con = db.GetConnection();
+            SqlCommand cmd = new(
+                "SELECT CustomerID FROM [Order] WHERE Order_ID = @id", con);
+
+            cmd.Parameters.AddWithValue("@id", orderId);
+            con.Open();
+
+            return (int)cmd.ExecuteScalar();
+        }
+
+        private int GetAnyPharmacistId(SqlConnection con)
+        {
+            SqlCommand cmd = new("SELECT TOP 1 UserID FROM Pharmacist", con);
+            return (int)cmd.ExecuteScalar();
+        }
+
+
+
+        
+
 
 
     }

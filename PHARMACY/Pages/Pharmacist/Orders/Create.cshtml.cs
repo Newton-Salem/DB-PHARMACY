@@ -9,7 +9,7 @@ namespace PHARMACY.Pages.Pharmacist.Orders
 {
     public class CreateModel : PageModel
     {
-        private readonly SupplierOrderDAO orderDAO = new();
+        private readonly SupplierRequestDAO orderDAO = new();
         private readonly CommonDAO commonDAO = new();
 
         // Dropdown data

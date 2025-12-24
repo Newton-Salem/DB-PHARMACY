@@ -9,72 +9,73 @@ namespace PHARMACY.DAO
     {
         DB db = DB.Instance;
 
-        // REGISTER
+        // ================= REGISTER USER =================
         public void InsertUser(string username, string password, string name,
                                string role, string email, string phone,
                                string address)
         {
-            string query = @"
+            using SqlConnection con = db.GetConnection();
+            con.Open();
+
+            using SqlTransaction tx = con.BeginTransaction();
+
+            try
+            {
+                string query = @"
                     INSERT INTO [USER]
-                    ([USERNAME], [PASSWORD], [NAME], [ROLE], Email, Phone, [Address])
+                    (USERNAME, [PASSWORD], [NAME], [ROLE], Email, Phone, [Address])
                     OUTPUT INSERTED.UserID
                     VALUES
                     (@Username, @Password, @Name, @Role, @Email, @Phone, @Address)
+                ";
+
+                SqlCommand cmd = new(query, con, tx);
+                cmd.Parameters.AddWithValue("@Username", username);
+                cmd.Parameters.AddWithValue("@Password", password); // يفضل Hash
+                cmd.Parameters.AddWithValue("@Name", name);
+                cmd.Parameters.AddWithValue("@Role", role);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Phone", phone);
+                cmd.Parameters.AddWithValue("@Address", address);
+
+                int userId = (int)cmd.ExecuteScalar();
+
+                // ✔ لو Customer بس
+                if (role == "Customer")
+                {
+                    string customerQuery = @"
+                        INSERT INTO Customer (UserID, LoyaltyPoints, Gender, EmergencyPhone)
+                        VALUES (@UserID, 0, NULL, NULL)
                     ";
 
+                    SqlCommand customerCmd = new(customerQuery, con, tx);
+                    customerCmd.Parameters.AddWithValue("@UserID", userId);
+                    customerCmd.ExecuteNonQuery();
+                }
 
-
-            int userId;
-            using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new SqlCommand(query, con);
-
-            cmd.Parameters.AddWithValue("@Username", username);
-            cmd.Parameters.AddWithValue("@Password", password);
-            cmd.Parameters.AddWithValue("@Name", name);
-            cmd.Parameters.AddWithValue("@Role", role);
-            cmd.Parameters.AddWithValue("@Email", email);
-            cmd.Parameters.AddWithValue("@Phone", phone);
-            cmd.Parameters.AddWithValue("@Address", address);
-
-            con.Open();
-            userId = (int)cmd.ExecuteScalar();
-
-
-
-
-            string customerQuery = @"
-INSERT INTO Customer (UserID, LoyaltyPoints, Gender, EmergencyPhone)
-VALUES (@UserID, 0, NULL, NULL)
-";
-
-            SqlCommand customerCmd = new SqlCommand(customerQuery, con);
-            customerCmd.Parameters.AddWithValue("@UserID", userId);
-            customerCmd.ExecuteNonQuery();
-
-
+                tx.Commit();
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
         }
 
-
-
-
-
-
+        // ================= CHECK USERNAME =================
         public bool UsernameExists(string username)
         {
             string query = "SELECT COUNT(*) FROM [USER] WHERE Username = @Username";
 
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new SqlCommand(query, con);
+            SqlCommand cmd = new(query, con);
             cmd.Parameters.AddWithValue("@Username", username);
 
             con.Open();
-            int count = (int)cmd.ExecuteScalar();
-
-            return count > 0;
+            return (int)cmd.ExecuteScalar() > 0;
         }
 
-
-        // LOGIN
+        // ================= LOGIN =================
         public SqlDataReader Login(string username, string password)
         {
             string query = @"
@@ -84,8 +85,7 @@ VALUES (@UserID, 0, NULL, NULL)
             ";
 
             SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new SqlCommand(query, con);
-
+            SqlCommand cmd = new(query, con);
             cmd.Parameters.AddWithValue("@Username", username);
             cmd.Parameters.AddWithValue("@Password", password);
 
@@ -93,46 +93,40 @@ VALUES (@UserID, 0, NULL, NULL)
             return cmd.ExecuteReader();
         }
 
-
-
+        // ================= GET ALL USERS =================
         public List<User> GetAllUsers()
         {
             List<User> users = new();
 
-            string query = @"
-                SELECT Username, Name, Role
-                FROM [USER]
-                ORDER BY Username
-            ";
+            string query = @"SELECT Username, Name, Role FROM [USER] ORDER BY Username";
 
             using SqlConnection con = db.GetConnection();
             SqlCommand cmd = new(query, con);
 
             con.Open();
-            using SqlDataReader reader = cmd.ExecuteReader();
+            using SqlDataReader r = cmd.ExecuteReader();
 
-            while (reader.Read())
+            while (r.Read())
             {
                 users.Add(new User
                 {
-                    Username = reader.GetString(0),
-                    Name = reader.GetString(1),
-                    Role = reader.GetString(2)
+                    Username = r.GetString(0),
+                    Name = r.GetString(1),
+                    Role = r.GetString(2)
                 });
             }
 
             return users;
         }
 
-        // ================= Delete User =================
+        // ================= DELETE USER =================
         public void DeleteUser(string username)
         {
             using SqlConnection con = db.GetConnection();
             con.Open();
 
-            // 1️⃣ هات UserID
             SqlCommand getIdCmd = new(
-                "SELECT UserID FROM [USER] WHERE Username = @username", con);
+                "SELECT UserID FROM [USER] WHERE Username=@username", con);
             getIdCmd.Parameters.AddWithValue("@username", username);
 
             object result = getIdCmd.ExecuteScalar();
@@ -140,20 +134,18 @@ VALUES (@UserID, 0, NULL, NULL)
 
             int userId = Convert.ToInt32(result);
 
-            // 2️⃣ امسح العلاقات (الترتيب مهم جدًا)
             string[] queries =
             {
-        "DELETE FROM Feedback WHERE CustomerID = @id",
-        "DELETE FROM [NOTIFICATION] WHERE UserID = @id",
-        "DELETE FROM [Payment] WHERE Order_ID IN (SELECT Order_ID FROM [Order] WHERE CustomerID = @id)",
-        "DELETE FROM Order_Medicine WHERE Order_ID IN (SELECT Order_ID FROM [Order] WHERE CustomerID = @id)",
-        "DELETE FROM [Order] WHERE CustomerID = @id",
-
-        "DELETE FROM Customer WHERE UserID = @id",
-        "DELETE FROM Pharmacist WHERE UserID = @id",
-        "DELETE FROM Supplier WHERE UserID = @id",
-        "DELETE FROM [ADMIN] WHERE UserID = @id"
-    };
+                "DELETE FROM Feedback WHERE CustomerID=@id",
+                "DELETE FROM [NOTIFICATION] WHERE UserID=@id",
+                "DELETE FROM [Payment] WHERE Order_ID IN (SELECT Order_ID FROM [Order] WHERE CustomerID=@id)",
+                "DELETE FROM Order_Medicine WHERE Order_ID IN (SELECT Order_ID FROM [Order] WHERE CustomerID=@id)",
+                "DELETE FROM [Order] WHERE CustomerID=@id",
+                "DELETE FROM Customer WHERE UserID=@id",
+                "DELETE FROM Pharmacist WHERE UserID=@id",
+                "DELETE FROM Supplier WHERE UserID=@id",
+                "DELETE FROM [ADMIN] WHERE UserID=@id"
+            };
 
             foreach (var q in queries)
             {
@@ -162,38 +154,30 @@ VALUES (@UserID, 0, NULL, NULL)
                 cmd.ExecuteNonQuery();
             }
 
-            // 3️⃣ امسح اليوزر نفسه
             SqlCommand deleteUserCmd = new(
-                "DELETE FROM [USER] WHERE UserID = @id", con);
+                "DELETE FROM [USER] WHERE UserID=@id", con);
             deleteUserCmd.Parameters.AddWithValue("@id", userId);
             deleteUserCmd.ExecuteNonQuery();
         }
 
-
-
-
-
-        // 🔹 Get user password by username
+        // ================= PASSWORD =================
         public string? GetPasswordByUsername(string username)
         {
-            string query = "SELECT [PASSWORD] FROM [USER] WHERE USERNAME = @username";
-
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
+            SqlCommand cmd = new(
+                "SELECT [PASSWORD] FROM [USER] WHERE USERNAME=@username", con);
             cmd.Parameters.AddWithValue("@username", username);
 
             con.Open();
-            object result = cmd.ExecuteScalar();
-            return result?.ToString();
+            return cmd.ExecuteScalar()?.ToString();
         }
 
-        // 🔹 Update password
         public void UpdatePassword(string username, string newPassword)
         {
-            string query = "UPDATE [USER] SET [PASSWORD] = @pass WHERE USERNAME = @username";
-
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
+            SqlCommand cmd = new(
+                "UPDATE [USER] SET [PASSWORD]=@pass WHERE USERNAME=@username", con);
+
             cmd.Parameters.AddWithValue("@pass", newPassword);
             cmd.Parameters.AddWithValue("@username", username);
 
@@ -201,25 +185,18 @@ VALUES (@UserID, 0, NULL, NULL)
             cmd.ExecuteNonQuery();
         }
 
-
-
-
-        // 🔹 Get user profile
+        // ================= PROFILE =================
         public User? GetUserByUsername(string username)
         {
-            string query = @"
-        SELECT Name, Email, Phone, Address
-        FROM [USER]
-        WHERE Username = @username
-    ";
-
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
+            SqlCommand cmd = new(@"
+                SELECT Name, Email, Phone, Address
+                FROM [USER] WHERE Username=@username", con);
+
             cmd.Parameters.AddWithValue("@username", username);
-
             con.Open();
-            using SqlDataReader r = cmd.ExecuteReader();
 
+            using SqlDataReader r = cmd.ExecuteReader();
             if (!r.Read()) return null;
 
             return new User
@@ -231,20 +208,13 @@ VALUES (@UserID, 0, NULL, NULL)
             };
         }
 
-        // 🔹 Update profile
         public void UpdateProfile(string username, string name, string email, string phone, string address)
         {
-            string query = @"
-        UPDATE [USER]
-        SET Name=@name,
-            Email=@email,
-            Phone=@phone,
-            Address=@address
-        WHERE Username=@username
-    ";
-
             using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
+            SqlCommand cmd = new(@"
+                UPDATE [USER]
+                SET Name=@name, Email=@email, Phone=@phone, Address=@address
+                WHERE Username=@username", con);
 
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@email", email);
@@ -254,6 +224,57 @@ VALUES (@UserID, 0, NULL, NULL)
 
             con.Open();
             cmd.ExecuteNonQuery();
+        }
+
+        // ================= INSERT ADMIN =================
+        public void InsertAdmin(string username, string password, string name,
+                                string email, string phone, string address,
+                                decimal salary)
+        {
+            if (UsernameExists(username))
+                throw new Exception("Username already exists");
+
+            using SqlConnection con = db.GetConnection();
+            con.Open();
+            using SqlTransaction tx = con.BeginTransaction();
+
+            try
+            {
+                string userQuery = @"
+                    INSERT INTO [USER]
+                    (USERNAME, [PASSWORD], [NAME], [ROLE], Email, Phone, [Address])
+                    OUTPUT INSERTED.UserID
+                    VALUES
+                    (@Username, @Password, @Name, 'Admin', @Email, @Phone, @Address)
+                ";
+
+                SqlCommand userCmd = new(userQuery, con, tx);
+                userCmd.Parameters.AddWithValue("@Username", username);
+                userCmd.Parameters.AddWithValue("@Password", password);
+                userCmd.Parameters.AddWithValue("@Name", name);
+                userCmd.Parameters.AddWithValue("@Email", email);
+                userCmd.Parameters.AddWithValue("@Phone", phone);
+                userCmd.Parameters.AddWithValue("@Address", address);
+
+                int userId = (int)userCmd.ExecuteScalar();
+
+                string adminQuery = @"
+                    INSERT INTO [ADMIN] (UserID, Salary, HireDate)
+                    VALUES (@UserID, @Salary, GETDATE())
+                ";
+
+                SqlCommand adminCmd = new(adminQuery, con, tx);
+                adminCmd.Parameters.AddWithValue("@UserID", userId);
+                adminCmd.Parameters.AddWithValue("@Salary", salary);
+                adminCmd.ExecuteNonQuery();
+
+                tx.Commit();
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
         }
     }
 }
