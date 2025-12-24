@@ -25,7 +25,7 @@ namespace PHARMACY.Pages.Customer.Notification
             return Page();
         }
 
-        // ✅ Mark as Read
+        //  Mark as Read
         public IActionResult OnPostRead(int id)
         {
             dao.MarkAsRead(id);

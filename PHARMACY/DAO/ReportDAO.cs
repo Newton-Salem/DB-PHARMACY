@@ -10,7 +10,7 @@ namespace PHARMACY.DAO
     {
         DB db = DB.Instance;
 
-        // ➕ Add Report
+        // Add Report
         public void Add(string description, string type, int adminId)
         {
             string query = @"
@@ -29,7 +29,7 @@ namespace PHARMACY.DAO
             cmd.ExecuteNonQuery();
         }
 
-        // 📄 Get All Reports (Admin)
+        //  Get All Reports (Admin)
         public List<Report> GetAll()
         {
             List<Report> list = new();

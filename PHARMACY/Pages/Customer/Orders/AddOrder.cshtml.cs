@@ -27,8 +27,6 @@ namespace PHARMACY.Pages.Customer.Orders
 
 
 
-            //int pharmacistId = orderDAO.GetAnyPharmacistId();
-
             Order order = new()
             {
                 CustomerID = customerId.Value,

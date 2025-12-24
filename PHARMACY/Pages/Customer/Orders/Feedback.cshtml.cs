@@ -41,7 +41,7 @@ namespace PHARMACY.Pages.Customer.Orders
 
             dao.AddFeedback(OrderId, customerId.Value, FeedbackText);
 
-            // ✅ رسالة نجاح
+            
             TempData["SuccessMessage"] =
                 "Your feedback has been submitted successfully. Thank you for your interest 🙏";
 

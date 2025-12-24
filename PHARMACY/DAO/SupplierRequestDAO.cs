@@ -9,48 +9,6 @@ namespace PHARMACY.DAO
         private readonly string cs =
             "Data Source=.;Initial Catalog=PROJECT;Integrated Security=True";
 
-        // 🔹 Get all supplier orders
-        //public List<SupplierRequest> GetAll()
-        //{
-        //    var list = new List<SupplierRequest>();
-
-        //    using SqlConnection con = new(cs);
-        //    con.Open();
-
-        //    string query = @"
-        //        SELECT 
-        //            SR.Request_id,
-        //            S.Company_Name,
-        //            M.Name,
-        //            SR.Quantity,
-        //            SR.Request_Date,
-        //            SR.Status
-        //        FROM Supplier_Request SR
-        //        JOIN Supplier S ON SR.SupplierID = S.UserID
-        //        JOIN SUPPLIER_REQUEST_MEDICINE SRM ON SR.Request_id = SRM.Request_ID
-        //        JOIN Medicine M ON SRM.Medicine_ID = M.Medicine_ID
-        //    ";
-
-        //    SqlCommand cmd = new(query, con);
-        //    SqlDataReader r = cmd.ExecuteReader();
-
-        //    while (r.Read())
-        //    {
-        //        list.Add(new SupplierRequest
-        //        {
-        //            RequestId = r.GetInt32(0),
-        //            PharmacistName = r.GetString(1),
-        //            MedicineName = r.GetString(2),
-        //            Quantity = r.GetInt32(3),
-        //            RequestDate = r.GetDateTime(4),
-        //            Status = r.GetString(5)
-        //        });
-        //    }
-
-        //    return list;
-        //}
-
-
         public List<SupplierRequest> GetAll()
         {
             var list = new List<SupplierRequest>();
@@ -159,19 +117,19 @@ namespace PHARMACY.DAO
 
 
 
-        // 🔹 Delete supplier order (Admin)
+        // Delete supplier order (Admin)
         public void Delete(int requestId)
         {
             using SqlConnection con = new(cs);
             con.Open();
 
-            // 1️⃣ امسح الربط مع الدوا
+            //  امسح الربط مع الدوا
             SqlCommand cmdSRM = new(
                 "DELETE FROM SUPPLIER_REQUEST_MEDICINE WHERE Request_ID = @id", con);
             cmdSRM.Parameters.AddWithValue("@id", requestId);
             cmdSRM.ExecuteNonQuery();
 
-            // 2️⃣ امسح الطلب نفسه
+            // امسح الطلب نفسه
             SqlCommand cmdReq = new(
                 "DELETE FROM Supplier_Request WHERE Request_id = @id", con);
             cmdReq.Parameters.AddWithValue("@id", requestId);
@@ -179,13 +137,13 @@ namespace PHARMACY.DAO
         }
 
 
-        // 🔹 Add new order
+        //  Add new order
         public void Add(int supplierId, int pharmacistId, int medicineId, int quantity, DateTime requestDate)
         {
             using SqlConnection con = new(cs);
             con.Open();
 
-            // 1️⃣ Insert Supplier_Request
+            //  Insert Supplier_Request
             string insertRequest = @"
         INSERT INTO Supplier_Request
         (Request_Date, Status, Quantity, SupplierID, PharmacistID)
@@ -202,7 +160,7 @@ namespace PHARMACY.DAO
 
             int requestId = (int)cmd.ExecuteScalar();
 
-            // 2️⃣ Link Medicine
+            //  Link Medicine
             string linkMedicine = @"
         INSERT INTO SUPPLIER_REQUEST_MEDICINE
         (Request_ID, Medicine_ID)
@@ -214,7 +172,7 @@ namespace PHARMACY.DAO
             cmd2.Parameters.AddWithValue("@m", medicineId);
             cmd2.ExecuteNonQuery();
 
-            // 🔔 3️⃣ Notification للمورّد
+            // 3️⃣ Notification للمورّد
             NotificationDAO notificationDAO = new NotificationDAO();
             notificationDAO.Add(
                 supplierId,
@@ -229,7 +187,7 @@ namespace PHARMACY.DAO
 
 
 
-        // 🔹 Cancel order
+        // Cancel order
         public void Cancel(int requestId)
         {
             using SqlConnection con = new(cs);

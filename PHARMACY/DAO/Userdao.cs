@@ -31,7 +31,7 @@ namespace PHARMACY.DAO
 
                 SqlCommand cmd = new(query, con, tx);
                 cmd.Parameters.AddWithValue("@Username", username);
-                cmd.Parameters.AddWithValue("@Password", password); // يفضل Hash
+                cmd.Parameters.AddWithValue("@Password", password); 
                 cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Role", role);
                 cmd.Parameters.AddWithValue("@Email", email);
@@ -40,7 +40,7 @@ namespace PHARMACY.DAO
 
                 int userId = (int)cmd.ExecuteScalar();
 
-                // ✔ لو Customer بس
+                
                 if (role == "Customer")
                 {
                     string customerQuery = @"

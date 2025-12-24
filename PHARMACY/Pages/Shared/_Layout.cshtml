@@ -6,10 +6,6 @@
 }
 
 
-@* @{
-    var role = Context.Session.GetString("Role");
-    var currentPath = Context.Request.Path.Value;
-} *@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -183,7 +179,7 @@
                     💊 PHARMACY
                 </a>
 
-                <!-- 🔔 Notification Bell -->
+                <!--  Notification Bell -->
                 <div class="position-relative">
                     @if (role == "Pharmacist")
                     {

@@ -9,7 +9,7 @@ namespace PHARMACY.DAO
     {
         DB db = DB.Instance;
 
-        // 🔹 Add Notification
+        // Add Notification
         public void Add(int userId, string message, string type)
         {
             string query = @"
@@ -30,7 +30,7 @@ namespace PHARMACY.DAO
         }
 
 
-        // 🔹 Get Notifications for User
+        // Get Notifications for User
         public List<Notification> GetByUser(int userId)
         {
             List<PHARMACY.Model.Notification> list = new();
@@ -63,7 +63,7 @@ namespace PHARMACY.DAO
             return list;
         }
 
-        // 🔹 Mark as Read
+        // Mark as Read
         public void MarkAsRead(int notificationId)
         {
             string query = @"
@@ -82,7 +82,7 @@ namespace PHARMACY.DAO
 
 
 
-        // 🔹 Count Unread Notifications
+        // Count Unread Notifications
         public int CountUnread(int userId)
         {
             string query = @"

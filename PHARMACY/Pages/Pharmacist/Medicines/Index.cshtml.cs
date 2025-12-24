@@ -70,24 +70,7 @@ namespace PHARMACY.Pages.Pharmacist.Medicines
             return RedirectToPage();
         }
 
-        // ================== SEARCH ==================
-        //public void OnPost()
-        //{
-        //    if (SelectedCategoryId.HasValue)
-        //    {
-        //        Medicines = dao.GetByCategory(SelectedCategoryId.Value);
-        //    }
-        //    else if (!string.IsNullOrWhiteSpace(SearchTerm))
-        //    {
-        //        Medicines = dao.Search(SearchTerm);
-        //    }
-        //    else
-        //    {
-        //        Medicines = dao.GetAll();
-        //    }
-
-        //    Categories = categoryDao.GetAll();
-        //}
+    
 
         public IActionResult OnPostSearch()
         {

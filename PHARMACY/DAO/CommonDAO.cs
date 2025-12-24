@@ -10,7 +10,7 @@ namespace PHARMACY.DAO
         private readonly string cs =
             "Data Source=.;Initial Catalog=PROJECT;Integrated Security=True";
 
-        // 🔹 Get all suppliers
+        //Get all suppliers
         public List<SupplierModel> GetSuppliers()
         {
             var list = new List<SupplierModel>();
@@ -39,7 +39,7 @@ namespace PHARMACY.DAO
             return list;
         }
 
-        // 🔹 Get all medicines
+        //Get all medicines
         public List<Medicine> GetMedicines()
         {
             var list = new List<Medicine>();

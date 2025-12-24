@@ -13,7 +13,7 @@ namespace PHARMACY.Pages.Pharmacist.CustomerFeedback
 
         public IActionResult OnGet()
         {
-            // 🔐 Security check
+            //  Security check
             if (HttpContext.Session.GetString("Role") != "Pharmacist")
             {
                 HttpContext.Session.Clear();

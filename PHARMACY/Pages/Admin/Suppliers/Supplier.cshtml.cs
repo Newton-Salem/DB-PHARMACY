@@ -24,7 +24,7 @@ namespace PHARMACY.Pages.Admin.SupplierOrders
 
         public IActionResult OnPostDelete(int requestId)
         {
-            dao.Delete(requestId);   // 👈 هنضيف الميثود دي
+            dao.Delete(requestId);   
             TempData["Message"] = "Supplier order deleted successfully ✅";
             return RedirectToPage();
         }

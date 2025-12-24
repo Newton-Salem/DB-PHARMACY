@@ -91,13 +91,13 @@ namespace PHARMACY.DAO
 
 
 
-        // ADD WITH CATEGORY  ✅ (جديد)
+        // ADD WITH CATEGORY  
         public void AddWithCategory(Medicine m, int categoryId)
         {
             using SqlConnection con = db.GetConnection();
             con.Open();
 
-            // 1️⃣ Add medicine
+            // Add medicine
             string q1 = @"
         INSERT INTO Medicine (Name, Stock_Quantity, Price, Expiry_Date)
         VALUES (@n,@s,@p,@e);
@@ -111,7 +111,7 @@ namespace PHARMACY.DAO
 
             int medicineId = Convert.ToInt32(cmd1.ExecuteScalar());
 
-            // 2️⃣ Link with category
+            //  Link with category
             string q2 = "INSERT INTO MEDICINE_CATEGORY VALUES (@m,@c)";
             SqlCommand cmd2 = new(q2, con);
             cmd2.Parameters.AddWithValue("@m", medicineId);

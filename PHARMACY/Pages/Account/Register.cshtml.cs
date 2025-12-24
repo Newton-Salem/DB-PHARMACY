@@ -17,7 +17,7 @@ namespace PHARMACY.Pages.Account
 
         public IActionResult OnPost()
         {
-            // 1️⃣ Validation
+            //  Validation
             if (string.IsNullOrWhiteSpace(Input.Username) ||
                 string.IsNullOrWhiteSpace(Input.Password) ||
                 string.IsNullOrWhiteSpace(Input.Name))
@@ -32,7 +32,7 @@ namespace PHARMACY.Pages.Account
                 return Page();
             }
 
-            // ✅ Check if username already exists
+            //  Check if username already exists
             if (dao.UsernameExists(Input.Username))
             {
                 Message = "Username already exists. Please choose another one.";
@@ -40,21 +40,20 @@ namespace PHARMACY.Pages.Account
             }
 
 
-            // 2️⃣ Insert User (Customer by default)
+            //  Insert User (Customer by default)
             dao.InsertUser(
                 Input.Username,
                 Input.Password,
                 Input.Name,
-                "Customer",     // 👈 role ثابت
+                "Customer",     
                 Input.Email,
                 Input.Phone,
                 Input.Address
             );
 
-            // 3️⃣ Success message
+            // Success message
             TempData["SuccessMessage"] = "Account created successfully 🎉";
-            return Page(); // ⬅️ مهم جدًا
-
+            return Page();
         }
     }
 
