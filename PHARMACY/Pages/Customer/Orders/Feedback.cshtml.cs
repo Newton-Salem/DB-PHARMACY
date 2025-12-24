@@ -1,81 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Linq;
+using PHARMACY.DAO;
 
 namespace PHARMACY.Pages.Customer.Orders
 {
     public class FeedbackModel : PageModel
     {
+        FeedbackDAO dao = new();
+
         [BindProperty(SupportsGet = true)]
-        public int OrderId { get; set; } // رقم الأوردر اللي هنعمل له فيدباك
+        public int OrderId { get; set; }
 
         [BindProperty]
-        public string FeedbackText { get; set; } // نص الفيدباك
+        public string FeedbackText { get; set; } = "";
 
-        public string Message { get; set; }
-
-        
-        public static List<OrderFeedback> Feedbacks { get; set; } = new List<OrderFeedback>();
+        public bool AlreadySubmitted { get; set; }
 
         public IActionResult OnGet(int orderId)
         {
-            var role = HttpContext.Session.GetString("Role");
-            if (string.IsNullOrEmpty(role) || role != "Customer")
-            {
-                HttpContext.Session.Clear();
+            if (HttpContext.Session.GetString("Role") != "Customer")
                 return RedirectToPage("/Account/Login");
-            }
 
-            // حدد الأوردر الحالي
+            int customerId = HttpContext.Session.GetInt32("UserID") ?? 0;
+
             OrderId = orderId;
-
-            // تحقق لو الفيدباك موجود 
-            var existing = Feedbacks.FirstOrDefault(f => f.OrderID == orderId
-                                                        && f.CustomerName == HttpContext.Session.GetString("Username"));
-            if (existing != null)
-            {
-                Message = "You have already submitted feedback for this order!";
-            }
+            AlreadySubmitted = dao.FeedbackExists(orderId, customerId);
 
             return Page();
         }
 
         public IActionResult OnPost()
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
-            {
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Customer")
                 return RedirectToPage("/Account/Login");
-            }
 
-            // تحقق لو الفيدباك موجود
-            var existing = Feedbacks.FirstOrDefault(f => f.OrderID == OrderId
-                                                        && f.CustomerName == username);
-            if (existing != null)
-            {
-                Message = "You have already submitted feedback for this order!";
-                return Page();
-            }
+            int? customerId = HttpContext.Session.GetInt32("UserID");
+            if (customerId == null)
+                return RedirectToPage("/Account/Login");
 
-            // اضافة الفيدباك الجديد
-            Feedbacks.Add(new OrderFeedback
-            {
-                OrderID = OrderId,
-                CustomerName = username,
-                FeedbackText = FeedbackText
-            });
+            dao.AddFeedback(OrderId, customerId.Value, FeedbackText);
 
-            Message = "Feedback submitted successfully!";
-            // بعد ما يبعته يرجعه على صفحة الأوردرز
+            // ✅ رسالة نجاح
+            TempData["SuccessMessage"] =
+                "Your feedback has been submitted successfully. Thank you for your interest 🙏";
+
             return RedirectToPage("/Customer/Orders/Index");
         }
-    }
 
-    public class OrderFeedback
-    {
-        public int OrderID { get; set; }
-        public string CustomerName { get; set; }
-        public string FeedbackText { get; set; }
+
     }
 }

@@ -1,0 +1,114 @@
+﻿@page
+@model PHARMACY.Pages.Admin.Reports.IndexModel
+
+<style>
+    .report-card {
+        background: linear-gradient(135deg, #ffffff, #f4f7ff);
+        border-radius: 22px;
+        padding: 24px;
+        height: 170px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: all 0.35s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+        .report-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+        }
+
+        .report-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .report-card:hover::after {
+            opacity: 1;
+        }
+
+    .report-icon {
+        width: 62px;
+        height: 62px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: white;
+        margin-bottom: 16px;
+        animation: pulse 3.5s ease-in-out infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.08);
+        }
+    }
+
+    .bg-sales {
+        background: linear-gradient(135deg, #22c55e, #86efac);
+    }
+
+   
+
+    .report-title {
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .report-desc {
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .report-arrow {
+        position: absolute;
+        bottom: 18px;
+        right: 18px;
+        font-size: 20px;
+        color: #2563eb;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.3s ease;
+    }
+
+    .report-card:hover .report-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+</style>
+
+<h3 class="fw-bold mb-4 text-center">📊 Reports</h3>
+
+<div class="row g-4 justify-content-center">
+
+    <!-- SALES REPORT -->
+    <div class="col-md-4">
+        <a href="/Admin/Reports/Sales" class="text-decoration-none text-dark">
+            <div class="report-card">
+                <div class="report-icon bg-sales">💰</div>
+
+                <div class="report-title">Sales Report</div>
+                <div class="report-desc">
+                    Revenue, completed orders & performance
+                </div>
+
+                <div class="report-arrow">→</div>
+            </div>
+        </a>
+    </div>
+
+    
+
+</div>

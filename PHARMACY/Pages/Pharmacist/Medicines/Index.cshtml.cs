@@ -1,137 +1,131 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
+using PHARMACY.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PHARMACY.Pages.Pharmacist.Medicines
 {
     public class IndexModel : PageModel
     {
-        
-        public static List<Medicine> MedicinesData = new List<Medicine>
-        {
-            new Medicine { Id = 1, Name = "Panadol", Stock = 10, ExpiryDate = DateTime.Today.AddMonths(6) },
-            new Medicine { Id = 2, Name = "Vitamin C", Stock = 0, ExpiryDate = DateTime.Today.AddMonths(3) },
-            new Medicine { Id = 3, Name = "Augmentin", Stock = 5, ExpiryDate = DateTime.Today.AddMonths(12) }
-        };
+        // DAOs
+        private readonly MedicineDAO dao = new();
+        private readonly CategoryDAO categoryDao = new();
 
-       
-        public List<Medicine> Medicines { get; set; } = new List<Medicine>();
+        // ===== DATA =====
+        public List<Medicine> Medicines { get; set; } = new();
+
+        public List<(int Id, string Name)> Categories { get; set; } = new();
+
+        // ===== ADD =====\
+        [BindProperty]
+        public string? SearchTerm { get; set; }
+        [BindProperty]
+        public Medicine NewMedicine { get; set; } = new();
 
         [BindProperty]
-        public string SearchTerm { get; set; }
+        public int? SelectedCategoryId { get; set; }
 
-        [BindProperty]
-        public NewMedicineInput NewMedicine { get; set; } = new NewMedicineInput();
-
+        // ===== UPDATE =====
         [BindProperty]
         public int UpdateMedicineId { get; set; }
 
         [BindProperty]
-        public int NewStock { get; set; }
+        public int? NewStock { get; set; }
 
         [BindProperty]
         public DateTime? NewExpiryDate { get; set; }
 
+        // ================== GET ==================
         public void OnGet()
         {
-            Medicines = MedicinesData;
+            Medicines = dao.GetAll();
+            Categories = categoryDao.GetAll();
         }
 
+
+        // ================== ADD ==================
         public IActionResult OnPostAdd()
         {
-            //  شوف لو الدواء موجود 
-            var existingMedicine = MedicinesData
-                .FirstOrDefault(m => m.Name.Equals(NewMedicine.Name, StringComparison.OrdinalIgnoreCase));
-
-            if (existingMedicine != null)
+            if (!SelectedCategoryId.HasValue)
             {
-                // لو موجود زود الاستوك و حدث التاريخ
-                existingMedicine.Stock += NewMedicine.Stock;
-                existingMedicine.ExpiryDate = NewMedicine.ExpiryDate;
-            }
-            else
-            {
-                //  لو جديد
-                int newId = MedicinesData.Any()
-                    ? MedicinesData.Max(m => m.Id) + 1
-                    : 1;
-
-                MedicinesData.Add(new Medicine
-                {
-                    Id = newId,
-                    Name = NewMedicine.Name,
-                    Stock = NewMedicine.Stock,
-                    ExpiryDate = NewMedicine.ExpiryDate
-                });
+                TempData["SuccessMessage"] = "❌ Please choose a category";
+                return RedirectToPage();
             }
 
-            //  تحديث الجدول
-            Medicines = MedicinesData;
+            dao.AddWithCategory(NewMedicine, SelectedCategoryId.Value);
 
-            //  تفريغ الفورم
-            NewMedicine = new NewMedicineInput();
-
-            return Page(); 
-        }
-
-
-        public IActionResult OnPostUpdate()
-        {
-            var med = MedicinesData.FirstOrDefault(m => m.Id == UpdateMedicineId);
-
-            if (med != null)
-            {
-                if (NewStock >= 0)
-                    med.Stock = NewStock;
-
-                if (NewExpiryDate.HasValue)
-                    med.ExpiryDate = NewExpiryDate.Value;
-            }
-
+            TempData["SuccessMessage"] = "✅ Medicine added successfully";
             return RedirectToPage();
         }
 
+
+        // ================== UPDATE ==================
+        public IActionResult OnPostUpdate()
+        {
+            dao.Update(UpdateMedicineId, NewStock, NewExpiryDate);
+
+            TempData["SuccessMessage"] = "✏️ Medicine updated successfully";
+            return RedirectToPage();
+        }
+
+        // ================== SEARCH ==================
+        //public void OnPost()
+        //{
+        //    if (SelectedCategoryId.HasValue)
+        //    {
+        //        Medicines = dao.GetByCategory(SelectedCategoryId.Value);
+        //    }
+        //    else if (!string.IsNullOrWhiteSpace(SearchTerm))
+        //    {
+        //        Medicines = dao.Search(SearchTerm);
+        //    }
+        //    else
+        //    {
+        //        Medicines = dao.GetAll();
+        //    }
+
+        //    Categories = categoryDao.GetAll();
+        //}
+
         public IActionResult OnPostSearch()
         {
+            
             if (string.IsNullOrWhiteSpace(SearchTerm))
             {
-                Medicines = MedicinesData;
+                Medicines = dao.GetAll();
             }
             else
             {
-                Medicines = MedicinesData
-                    .Where(m => m.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                Medicines = dao.Search(SearchTerm.Trim());
             }
 
+            Categories = categoryDao.GetAll();
             return Page();
         }
 
-       
+
+
+        // ================== OUT OF STOCK ==================
         public IActionResult OnPostOutOfStock()
         {
-            Medicines = MedicinesData
-                .Where(m => m.Stock == 0)
-                .ToList();
-
+            Medicines = dao.GetOutOfStock();
+            Categories = categoryDao.GetAll();
             return Page();
         }
-    }
 
-    public class Medicine
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Stock { get; set; }
-        public DateTime ExpiryDate { get; set; }
-    }
 
-    public class NewMedicineInput
-    {
-        public string Name { get; set; }
-        public int Stock { get; set; }
-        public DateTime ExpiryDate { get; set; }
+
+        public void OnPostFilter()
+        {
+            if (SelectedCategoryId.HasValue)
+                Medicines = dao.GetByCategory(SelectedCategoryId.Value);
+            else
+                Medicines = dao.GetAll();
+
+            Categories = categoryDao.GetAll();
+        }
+
     }
 }

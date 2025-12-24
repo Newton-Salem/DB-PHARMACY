@@ -1,27 +1,46 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
+using PHARMACY.Models;
 using System.Collections.Generic;
 
 namespace PHARMACY.Pages.Customer.Medicines
 {
     public class IndexModel : PageModel
     {
-        public List<Medicine> Medicines { get; set; }
+        private readonly MedicineDAO medicineDAO = new();
+        private readonly CategoryDAO categoryDAO = new();
 
+        // ===== DATA =====
+        public List<Medicine> Medicines { get; set; } = new();
+        public List<(int Id, string Name)> Categories { get; set; } = new();
+
+        // ===== FILTERS =====
+        [BindProperty(SupportsGet = true)]
+        public string? SearchTerm { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? CategoryId { get; set; }
+
+        // ===== GET =====
         public void OnGet()
         {
-            Medicines = new List<Medicine>
-            {
-                new Medicine{ Medicine_ID=1, Name="Paracetamol", Price=10 },
-                new Medicine{ Medicine_ID=2, Name="Ibuprofen", Price=20 },
-                new Medicine{ Medicine_ID=3, Name="Vitamin C", Price=15 }
-            };
-        }
-    }
+            // Load categories always
+            Categories = categoryDAO.GetAll();
 
-    public class Medicine
-    {
-        public int Medicine_ID { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
+            // Filter logic
+            if (CategoryId.HasValue)
+            {
+                Medicines = medicineDAO.GetByCategory(CategoryId.Value);
+            }
+            else if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                Medicines = medicineDAO.Search(SearchTerm.Trim());
+            }
+            else
+            {
+                Medicines = medicineDAO.GetAll();
+            }
+        }
     }
 }

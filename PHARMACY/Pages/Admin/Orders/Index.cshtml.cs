@@ -1,47 +1,49 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PHARMACY.DAO;
+using PHARMACY.Model;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PHARMACY.Pages.Admin.Orders
 {
     public class IndexModel : PageModel
     {
-       
-        public static List<Order> OrdersList = new List<Order>
-        {
-            new Order { OrderID = 1, CustomerName = "Ahmed Ali", TotalAmount = 250, Status = "Pending" },
-            new Order { OrderID = 2, CustomerName = "Sama Noor", TotalAmount = 500, Status = "Completed" },
-            new Order { OrderID = 3, CustomerName = "Noor Salem", TotalAmount = 150, Status = "Pending" }
-        };
+        private readonly OrderDAO orderDAO = new();
+
+        public List<Order> Orders { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public int? SearchID { get; set; }
 
-        public List<Order> Orders { get; set; }
-
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            Orders = SearchID.HasValue
-                ? OrdersList.Where(o => o.OrderID == SearchID.Value).ToList()
-                : OrdersList;
+            var role = HttpContext.Session.GetString("Role");
+            if (string.IsNullOrEmpty(role) || role != "Admin")
+            {
+                HttpContext.Session.Clear();
+                return RedirectToPage("/Account/Login");
+            }
+
+            Orders = orderDAO.GetAllOrdersForAdmin();
+
+            if (SearchID.HasValue)
+            {
+                Orders = Orders
+                    .Where(o => o.OrderID == SearchID.Value)
+                    .ToList();
+            }
+
+            return Page();
         }
 
         public IActionResult OnPostDelete(int orderId)
         {
-            var order = OrdersList.FirstOrDefault(o => o.OrderID == orderId);
-            if (order != null)
-            {
-                OrdersList.Remove(order);
-            }
+            orderDAO.DeleteOrder(orderId);
+
+            TempData["DeleteMessage"] = "Order deleted successfully ✅";
 
             return RedirectToPage();
         }
-    }
-
-    public class Order
-    {
-        public int OrderID { get; set; }
-        public string CustomerName { get; set; }
-        public decimal TotalAmount { get; set; }
-        public string Status { get; set; }
     }
 }

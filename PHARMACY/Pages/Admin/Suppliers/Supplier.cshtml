@@ -1,0 +1,226 @@
+﻿@page "/Admin/Suppliers"
+@model PHARMACY.Pages.Admin.SupplierOrders.IndexModel
+@{
+    ViewData["Title"] = "Supplier Orders";
+}
+
+<!-- ===================== Styles ===================== -->
+<style>
+    body {
+        background: linear-gradient(135deg, #f4f8ff, #eef3fb);
+    }
+
+    .page-title {
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        transition: .35s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,0,0,.15);
+        }
+
+    .stat-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        color: #fff;
+    }
+
+    .bg-blue {
+        background: linear-gradient(135deg,#4f8cff,#7fb3ff);
+    }
+
+    .bg-yellow {
+        background: linear-gradient(135deg,#f59e0b,#fde68a);
+    }
+
+    .bg-green {
+        background: linear-gradient(135deg,#22c55e,#86efac);
+    }
+
+    .bg-red {
+        background: linear-gradient(135deg,#ef4444,#fca5a5);
+    }
+
+    .soft-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .supplier-table thead {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+    }
+
+    .supplier-table tbody tr {
+        transition: .25s;
+    }
+
+        .supplier-table tbody tr:hover {
+            background: #f3f7ff;
+            transform: scale(1.01);
+        }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 18px;
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .status-pending {
+        background: #f59e0b;
+        color: #1f2937;
+    }
+
+    .status-approved {
+        background: #22c55e;
+    }
+
+    .status-cancelled {
+        background: #ef4444;
+    }
+
+    .btn-soft {
+        border-radius: 12px;
+        transition: .25s;
+    }
+
+        .btn-soft:hover {
+            transform: scale(1.08);
+        }
+</style>
+
+<!-- ===================== Content ===================== -->
+<div class="container mt-4">
+
+    <h2 class="text-center page-title">🏭 Supplier Orders</h2>
+
+    <!-- ===== Stats Cards ===== -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-blue">📦</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Total Orders</h6>
+                    <h4 class="fw-bold">@Model.Orders.Count</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-yellow">⏳</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Pending</h6>
+                    <h4 class="fw-bold">
+                        @Model.Orders.Count(o => o.Status == "Pending")
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-green">✅</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Approved</h6>
+                    <h4 class="fw-bold">
+                        @Model.Orders.Count(o => o.Status == "Approved")
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-red">❌</div>
+                <div>
+                    <h6 class="mb-0 text-muted">Cancelled</h6>
+                    <h4 class="fw-bold">
+                        @Model.Orders.Count(o => o.Status == "Cancelled")
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== Supplier Orders Table ===== -->
+    <div class="soft-card">
+        <table class="table supplier-table text-center align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Supplier</th>
+                    <th>Medicine</th>
+                    <th>Quantity</th>
+                    <th>Expected Date</th>
+                    <th>Status</th>
+                    <th style="width:120px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Orders == null || Model.Orders.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="text-muted">
+                            No supplier orders found
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var o in Model.Orders)
+                    {
+                        <tr>
+                            <td>@o.RequestId</td>
+                            <td class="fw-semibold">@o.PharmacistName</td>
+                            <td>@o.MedicineName</td>
+                            <td>@o.Quantity</td>
+                            <td>@o.RequestDate.ToShortDateString()</td>
+                            <td>
+                                <span class="status-badge
+                                            @(o.Status == "Pending" ? "status-pending" :
+                                                                            o.Status == "Approved" ? "status-approved" :
+                                                                            "status-cancelled")">
+                            @o.Status
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post"
+                              asp-page-handler="Delete"
+                              onsubmit="return confirm('Delete this supplier order?');">
+                            <input type="hidden" name="requestId" value="@o.RequestId" />
+                            <button class="btn btn-danger btn-sm btn-soft w-100">
+                                🗑 Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                                }
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

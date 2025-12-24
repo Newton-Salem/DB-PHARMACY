@@ -6,40 +6,135 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4 bg-light rounded">
-        <div class="card-body text-center">
-            <h2 class="card-title mb-3">Welcome, @Model.Username!</h2>
-            <p class="card-text mb-4">Welcome!.</p>
+<style>
+    /* ===== Supplier Dashboard ===== */
 
-            <div class="row justify-content-center">
-                <div class="col-md-3 mb-3">
-                    <a href="/Supplier/Order/Index" class="btn btn-primary btn-lg w-100 shadow">View Orders</a>
+    body {
+        background: linear-gradient(135deg, #eef2ff, #f8f9ff);
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* Animation */
+    @@keyframes fadeZoom {
+        from
+
+    {
+        opacity: 0;
+        transform: scale(.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    }
+
+    .dashboard-card {
+        border: none;
+        border-radius: 26px;
+        animation: fadeZoom .7s ease;
+        background: linear-gradient(135deg, #ffffff, #f4f7ff);
+        box-shadow: 0 25px 60px rgba(13,110,253,.15);
+    }
+
+    /* Avatar */
+    .avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d6efd, #5b8cff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: #fff;
+        margin: auto;
+        box-shadow: 0 15px 35px rgba(13,110,253,.4);
+    }
+
+    /* Action Cards */
+    .action-card {
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+        color: #fff;
+        transition: all .35s ease;
+        cursor: pointer;
+    }
+
+        .action-card:hover {
+            transform: translateY(-8px) scale(1.03);
+        }
+
+    .orders {
+        background: linear-gradient(135deg, #20c997, #17a589);
+        box-shadow: 0 18px 40px rgba(23,165,137,.45);
+    }
+
+    .notify {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        box-shadow: 0 18px 40px rgba(255,152,0,.45);
+    }
+
+    .action-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .action-card a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center"
+     style="min-height:100vh;">
+
+    <div class="col-md-9 col-lg-8">
+
+        <div class="card dashboard-card p-4">
+
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <div class="avatar mb-3">
+                    🏭
                 </div>
-                <div class="col-md-3 mb-3">
-                    <a href="/Supplier/Notifications/Index" class="btn btn-warning btn-lg w-100 shadow">Notifications</a>
-                </div>
+                <h3 class="fw-bold mb-1">
+                    Welcome, @Model.Username
+                </h3>
+                <p class="text-muted mb-0">
+                    Supplier Control Panel
+                </p>
             </div>
+
+            <!-- Actions -->
+            <div class="row g-4 mt-2">
+
+                <div class="col-md-6">
+                    <div class="action-card orders">
+                        <div class="action-icon">📦</div>
+                        <h5 class="fw-bold mb-2">Orders</h5>
+                        <p class="mb-3">View & manage supplier orders</p>
+                        <a href="/Supplier/Orders/Index">Go to Orders →</a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="action-card notify">
+                        <div class="action-icon">🔔</div>
+                        <h5 class="fw-bold mb-2">Notifications</h5>
+                        <p class="mb-3">Check updates & alerts</p>
+                        <a href="/Supplier/Notification/Index">
+                            View Notifications →
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
+
     </div>
 </div>
-
-<style>
-    body {
-        background-color: #f0f2f5;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .card {
-        border: none;
-        border-radius: 15px;
-    }
-
-    .btn {
-        transition: transform 0.2s;
-    }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
-</style>

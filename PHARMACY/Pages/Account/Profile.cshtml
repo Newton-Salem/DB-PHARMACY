@@ -2,30 +2,184 @@
 @model PHARMACY.Pages.Account.ProfileModel
 @{
     ViewData["Title"] = "Profile";
+    Layout = null;
 }
 
-<div class="container mt-5" style="max-width: 600px;">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
-            <h3>User Profile</h3>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Profile | PHARMACY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <div class="card-body">
-            <table class="table table-borderless mb-0">
-                <tr>
-                    <th class="text-start" style="width: 40%;">Username</th>
-                    <td class="text-start">@Model.Username</td>
-                </tr>
-                <tr>
-                    <th class="text-start">Role</th>
-                    <td class="text-start">@Model.Role</td>
-                </tr>
-            </table>
-        </div>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-        <div class="card-footer text-center">
-            <a href="/Account/EditProfile" class="btn btn-outline-primary">Edit Profile</a>
-            <a href="/Account/ChangePassword" class="btn btn-outline-secondary ms-2">Change Password</a>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f1f5f9, #e6f0ff);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .page-enter {
+            animation: fadeUp 0.6s ease;
+        }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-card {
+            border-radius: 22px;
+            border: none;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+            overflow: hidden;
+            background: white;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            padding: 40px 20px 60px;
+            text-align: center;
+            color: white;
+        }
+
+        .avatar {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            background: white;
+            color: #2563eb;
+            font-size: 42px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -50px auto 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            transition: transform 0.3s ease;
+        }
+
+            .avatar:hover {
+                transform: scale(1.08);
+            }
+
+        .info-row {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            transition: background 0.3s ease;
+        }
+
+            .info-row:hover {
+                background: #eef4ff;
+            }
+
+        .role-badge {
+            background: #ecfeff;
+            color: #0369a1;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .action-btn {
+            border-radius: 16px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+            .action-btn:hover {
+                transform: translateY(-2px);
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center page-enter"
+         style="min-height:100vh;">
+
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card profile-card">
+
+                <!-- Header -->
+                <div class="profile-header">
+                    <h4 class="fw-bold mb-1">
+                        <i class="bi bi-person-circle me-1"></i>
+                        Profile
+                    </h4>
+                    <small>Account Information</small>
+                </div>
+
+                <!-- Avatar -->
+                <div class="avatar">
+                    @Model.Username.FirstOrDefault()
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-4 text-center">
+
+                    <h5 class="fw-bold mb-1">@Model.Username</h5>
+
+                    <div class="role-badge mb-3">
+                        <i class="bi bi-shield-lock"></i> @Model.Role
+                    </div>
+
+                    <hr />
+
+                    <!-- Info -->
+                    <div class="text-start">
+                        <div class="info-row">
+                            <span class="text-muted">
+                                <i class="bi bi-person"></i> Username
+                            </span>
+                            <strong>@Model.Username</strong>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="text-muted">
+                                <i class="bi bi-person-badge"></i> Role
+                            </span>
+                            <strong>@Model.Role</strong>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/Account/EditProfile"
+                           class="btn btn-primary action-btn px-4">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+
+                        <a href="/Account/ChangePassword"
+                           class="btn btn-outline-secondary action-btn px-4">
+                            <i class="bi bi-key"></i> Password
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
