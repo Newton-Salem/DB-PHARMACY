@@ -87,24 +87,7 @@ namespace PHARMACY.DAO
             return list;
         }
 
-        // ADD 
-        //public void Add(Medicine m)
-        //{
-        //    string query = @"
-        //        INSERT INTO Medicine (Name, Stock_Quantity, Price, Expiry_Date)
-        //        VALUES (@n, @s, @p, @e)";
-
-        //    using SqlConnection con = db.GetConnection();
-        //    SqlCommand cmd = new(query, con);
-
-        //    cmd.Parameters.AddWithValue("@n", m.Name);
-        //    cmd.Parameters.AddWithValue("@s", m.Stock_Quantity);
-        //    cmd.Parameters.AddWithValue("@p", m.Price);
-        //    cmd.Parameters.AddWithValue("@e", m.Expiry_Date);
-
-        //    con.Open();
-        //    cmd.ExecuteNonQuery();
-        //}
+       
 
 
 

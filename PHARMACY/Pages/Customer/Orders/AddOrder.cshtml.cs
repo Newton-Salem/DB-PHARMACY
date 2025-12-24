@@ -39,7 +39,13 @@ namespace PHARMACY.Pages.Customer.Orders
 
             orderDAO.AddOrder(order, MedicineID);
 
+            TempData["OrderSuccess"] = true;
+
             return RedirectToPage("/Customer/Orders/Index");
+
+
+            
+
         }
 
     }
