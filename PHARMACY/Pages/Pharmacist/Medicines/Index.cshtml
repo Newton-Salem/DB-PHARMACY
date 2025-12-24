@@ -178,6 +178,16 @@
             ⚠ Out Of Stock
         </button>
     </form>
+    
+
+
+    <form method="post" asp-page-handler="OutOfStock">
+        <button class="btn btn-danger w-100">
+            ⚠ Out Of Stock
+        </button>
+    </form>
+
+
 </div>
 
 <!-- ➕ ADD MEDICINE -->
@@ -249,6 +259,9 @@
                     <th>Update</th>
                 </tr>
             </thead>
+
+            
+
 
             <tbody>
                 @foreach (var m in Model.Medicines)
