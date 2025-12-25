@@ -10,25 +10,6 @@ namespace PHARMACY.DAO
     {
         DB db = DB.Instance;
 
-        // Add Report
-        public void Add(string description, string type, int adminId)
-        {
-            string query = @"
-                INSERT INTO Report (Description, GeneratedDate, ReportType, AdminID)
-                VALUES (@desc, GETDATE(), @type, @aid)
-            ";
-
-            using SqlConnection con = db.GetConnection();
-            SqlCommand cmd = new(query, con);
-
-            cmd.Parameters.AddWithValue("@desc", description);
-            cmd.Parameters.AddWithValue("@type", type);
-            cmd.Parameters.AddWithValue("@aid", adminId);
-
-            con.Open();
-            cmd.ExecuteNonQuery();
-        }
-
         //  Get All Reports (Admin)
         public List<Report> GetAll()
         {

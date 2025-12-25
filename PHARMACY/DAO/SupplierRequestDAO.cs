@@ -1,20 +1,22 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using PHARMACY.Model;
 using System.Collections.Generic;
+using PHARMACY.Data;
+using System.Collections;
 
 namespace PHARMACY.DAO
 {
     public class SupplierRequestDAO
     {
-        private readonly string cs =
-            "Data Source=.;Initial Catalog=PROJECT;Integrated Security=True";
+        DB db = DB.Instance;
 
         public List<SupplierRequest> GetAll()
         {
             var list = new List<SupplierRequest>();
 
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             string query = @"
         SELECT 
@@ -56,8 +58,9 @@ namespace PHARMACY.DAO
         {
             var list = new List<SupplierRequest>();
 
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             string query = @"
         SELECT 
@@ -100,8 +103,9 @@ namespace PHARMACY.DAO
 
         public void UpdateStatus(int requestId, string status)
         {
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             SqlCommand cmd = new(
                 "UPDATE Supplier_Request SET Status = @status WHERE Request_id = @id",
@@ -120,8 +124,9 @@ namespace PHARMACY.DAO
         // Delete supplier order (Admin)
         public void Delete(int requestId)
         {
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             //  امسح الربط مع الدوا
             SqlCommand cmdSRM = new(
@@ -140,8 +145,9 @@ namespace PHARMACY.DAO
         //  Add new order
         public void Add(int supplierId, int pharmacistId, int medicineId, int quantity, DateTime requestDate)
         {
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             //  Insert Supplier_Request
             string insertRequest = @"
@@ -190,8 +196,9 @@ namespace PHARMACY.DAO
         // Cancel order
         public void Cancel(int requestId)
         {
-            using SqlConnection con = new(cs);
+            using SqlConnection con = db.GetConnection();
             con.Open();
+
 
             SqlCommand cmd = new(
                 "UPDATE Supplier_Request SET Status='Cancelled' WHERE Request_id=@id",

@@ -11,7 +11,7 @@ namespace PHARMACY.Data
         private DB()
         {
             _connectionString =
-                "Data Source=DESKTOP-FTLP00F;Initial Catalog=PROJECT;Integrated Security=True;Encrypt=False;Trust Server Certificate=True";
+                "Data Source=NEWTON-LAPTOP;Initial Catalog=PROJECT_DB;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
         }
 
         public static DB Instance
